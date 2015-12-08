@@ -133,6 +133,26 @@ echo ($action == 'edit') ? __('コンテンツ修正') : __('コンテンツ新�
                                     ?>
                                 </div>
                             </div>
+                            <div class="form-group">
+                                <div class="control-label col-sm-3">
+                                    <span><?php echo __('開始日') ?>:</span>
+                                </div>
+                                <div class="detail-code-content col-sm-9">
+                                    <?php if(isset($bookmark['Bookmark']['start_date'])) echo $this->Form->input('Bookmark.start_date', array('div' => false, 'type' => 'text', 'label' => FALSE, 'id' => 'start_date', 'value' => h(date('Y/m/d', strtotime($bookmark['Bookmark']['start_date'])))));
+                                        else echo $this->Form->input('Bookmark.start_date', array('div' => false, 'type' => 'text', 'label' => FALSE, 'id' => 'start_date'));
+                                    ?>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="control-label col-sm-3">
+                                    <span><?php echo __('終了日') ?>:</span>
+                                </div>
+                                <div class="detail-code-content col-sm-9">
+                                    <?php if(isset($bookmark['Bookmark']['end_date'])) echo $this->Form->input('Bookmark.end_date', array('div' => false, 'type' => 'text', 'label' => FALSE, 'id' => 'end_date', 'value' => h(date('Y/m/d', strtotime($bookmark['Bookmark']['end_date'])))));
+                                        else echo $this->Form->input('Bookmark.end_date', array('div' => false, 'type' => 'text', 'label' => FALSE, 'id' => 'end_date'));
+                                    ?>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
@@ -555,5 +575,27 @@ var baseUrl = '<?php echo $this->webroot ?>
     typeIconSelect = null;
     $('#ajaxSubModal.in').modal('hide');
     });
+
+// process datepicker
+    $("#start_date").datepicker({
+        defaultDate: "+1w",
+        inline: true,
+        numberOfMonths: 1,
+        dateFormat: 'yy-mm-dd',
+        maxDate: 0,
+        onClose: function(selectedDate) {
+            $("#end_date").datepicker("option", "minDate", selectedDate);
+        }
     });
+    $("#end_date").datepicker({
+        defaultDate: "+1w",
+        inline: true,
+        numberOfMonths: 1,
+        dateFormat: 'yy-mm-dd',
+        maxDate: 0,
+        onClose: function(selectedDate) {
+            $("#start_date").datepicker("option", "maxDate", selectedDate);
+        }
+    });
+});
 </script>

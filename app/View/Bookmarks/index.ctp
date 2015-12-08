@@ -167,6 +167,8 @@ $last_login = $this->requestAction(array('controller' => 'managements', 'action'
             <th class="typeB highlight"><?php echo __('ラベル')/* $this->Paginator->sort('label', __('ラベル')); */ ?></th>
             <th class="typeB"><?php echo $this->Paginator->sort('name', __('名前')); ?></th>
             <th class="typeB"><?php echo $this->Paginator->sort('code', __('バーコード')); ?></th>
+            <th class="typeB"><?php echo $this->Paginator->sort('start_date', __('開始日')); ?></th>
+            <th class="typeB"><?php echo $this->Paginator->sort('end_date', __('終了日')); ?></th>
             <th class="typeB"><?php echo $this->Paginator->sort('cdate', __('更新日時')); ?></th>
             <th class="typeB"><?php echo $this->Paginator->sort('link', __('配信プレート数')); ?></th>
             <th class="typeB highlight"><?php echo __('当月アクセス数')/* $this->Paginator->sort('access', __('当月アクセス数')); */ ?></th>
@@ -204,6 +206,8 @@ $last_login = $this->requestAction(array('controller' => 'managements', 'action'
                     data-name="<?php echo Utility_Str::escapehtml($bookmark['Bookmark']['name']) ?>"><?php echo Utility_Str::wordTrim(Utility_Str::escapehtml($bookmark['Bookmark']['name']), 50); ?></td>
                 <td class="bm_code"
                     data-name="<?php echo Utility_Str::escapehtml($bookmark['Bookmark']['code']) ?>"><?php echo Utility_Str::wordTrim(Utility_Str::escapehtml($bookmark['Bookmark']['code']), 50); ?></td>
+                <td><?php echo date('Y/m/d', strtotime($bookmark['Bookmark']['start_date'])); ?></td>
+                <td><?php echo date('Y/m/d', strtotime($bookmark['Bookmark']['end_date'])); ?></td>
                 <td><?php echo date('Y/m/d H:i:s', strtotime($bookmark['Bookmark']['cdate'])); ?></td>
                 <td><?php echo $bookmark['Link']; ?></td>
                 <td><?php echo $bookmark['Access']; ?></td>

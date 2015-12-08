@@ -70,7 +70,9 @@ $session = $this->Session->read('Auth.User');
                                 <span><?php echo __('開始日') ?>:</span>
                             </div>
                             <div class="detail-code-content col-sm-8">
-                                <?php echo $this->Form->input('Team.start_date', array('div' => false, 'type' => 'text', 'label' => FALSE, 'id' => 'start_date', 'value' => h(date('Y/m/d', strtotime($team['Team']['start_date']))))); ?>
+                                <?php if(isset($team['Team']['start_date'])) echo $this->Form->input('Team.start_date', array('div' => false, 'type' => 'text', 'label' => FALSE, 'id' => 'start_date', 'value' => h(date('Y/m/d', strtotime($team['Team']['start_date'])))));
+                                    else echo $this->Form->input('Team.start_date', array('div' => false, 'type' => 'text', 'label' => FALSE, 'id' => 'start_date'));
+                                ?>
                             </div>
                         </div>
                         <div class="form-group">

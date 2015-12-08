@@ -177,7 +177,7 @@ $last_login = $this->requestAction(array('controller' => 'managements', 'action'
                         <?php if ($team['Team']['start_date'] != null) echo h(date('Y/m/d', strtotime($team['Team']['start_date']))) ?>
                     </td>
                     <td class="centering nowrap">
-                        <?php if ($team['Team']['last_access'] != null) echo h(date('Y/m/d H:i:s', strtotime($team['Team']['last_access']))) ?>
+                        <?php if ($team['Team']['last_access'] != null) echo h(date('Y/m/D H:i:s', strtotime($team['Team']['last_access']))) ?>
                     </td>
                     <td class="centering _manager" data-id = "<?php echo $team['Management']['id'] ?>"><?php echo $team['Management']['login_name'] ?></td>
                 </tr>
