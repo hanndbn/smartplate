@@ -553,7 +553,7 @@ $(document).ready(function () {
             var data = {from: fromVal, to: toVal},
                 web_root = "<?php echo $this->webroot ?>",
                 now = new Date().getTime(),
-                url = buildUrl(web_root + "accesslogs/ajaxDatePicker", '_t', now);
+                url = buildUrl(web_root + "tags/ajaxFilterPlate", '_t', now);
             $.ajax({
                 type: "POST",
                 data: data,

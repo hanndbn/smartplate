@@ -1091,6 +1091,16 @@ class TagsController extends AppController
         return $this->render('/Labels/index');
     }
 
+    public function ajaxFilterPlate()
+    {
+        if ($this->request->is('ajax')) {
+            $input = $this->request->data;
+            $from = isset($input['from']) ? $input['from'] : '';
+            $to = isset($input['to']) ? $input['to'] : '';
+
+            print_r($from); exit;
+        }
+    }
 }
 
 ?>
