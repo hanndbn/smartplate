@@ -77,10 +77,13 @@ $team_id = ($this->request->prefix == 'system') ? '' : $session['team_id'];
                         ?>
                         <?php ?>
                     </span>
-
             <a id="quickAction-btn" style="display:none;" href="#" class="imgBtn wide m-l-sm"><?php echo __('設定') ?></a>
         </td>
         <td class="pull-right">
+            <input type="text" id="from" name="from" style="width: 100px; height: 25px;">
+            <label for="to">～</label>
+            <input type="text" id="to" name="to" style="width: 100px; height: 25px;">
+            <input type="button" id="datePickerBtn" class="imgBtn wide hightlight-btn m-sm" value="Confirm" style="margin-right: 50px;">
             <?php echo $this->Html->link(__('プレート申請'), array('controller' => 'orders', 'action' => 'orderRegist'), array('id' => 'dialog_order_open', 'class' => 'imgBtn wide', 'data-toggle' => 'ajaxModal')); ?>
         </td>
     </tr>
@@ -518,6 +521,51 @@ $(document).ready(function () {
     <?php if ($authority == 2 || $authority == 1 || $this->request->prefix == 'system') { ?>
     $('#dialog_order_open').hide();
     <?php } ?>
+
+    // process date picker filter NFC
+    $("#from").datepicker({
+        defaultDate: "+1w",
+        inline: true,
+        numberOfMonths: 1,
+        dateFormat: 'yy-mm-dd',
+        maxDate: 0,
+        onClose: function(selectedDate) {
+            $("#to").datepicker("option", "minDate", selectedDate);
+        }
+    });
+    $("#to").datepicker({
+        defaultDate: "+1w",
+        inline: true,
+        numberOfMonths: 1,
+        dateFormat: 'yy-mm-dd',
+        maxDate: 0,
+        onClose: function(selectedDate) {
+            $("#from").datepicker("option", "maxDate", selectedDate);
+        }
+    });
+    $('#datePickerBtn').click(function() {
+        var fromVal = $('#from').val(),
+            toVal = $('#to').val();
+        if (fromVal == '' || toVal == '') {
+            alert('<?php echo __('Input date should not be empty.') ?>');
+            return false;
+        } else {
+            var data = {from: fromVal, to: toVal},
+                web_root = "<?php echo $this->webroot ?>",
+                now = new Date().getTime(),
+                url = buildUrl(web_root + "accesslogs/ajaxDatePicker", '_t', now);
+            $.ajax({
+                type: "POST",
+                data: data,
+                url: url,
+                success: function(rs) {
+                    
+                },
+                error: function() {
+                }
+            });
+        }
+    });
 
 });
 </script>
