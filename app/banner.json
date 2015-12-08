@@ -1,0 +1,14 @@
+{
+	"banners": [
+		{
+			"banner_id": "1",
+			"image_url": "http://smartplate.pro/banner/smartplate_play_ttl.jpg",
+			"link_url": "http://spirals.co.jp/smartplate/ja",
+			"title": "Aquabit Spirals"
+		}
+	],
+	"status": {
+		"code": "0",
+		"message": ""
+	}
+}

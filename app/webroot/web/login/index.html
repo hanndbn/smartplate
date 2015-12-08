@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html >
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
+    <title>Login Form</title>
+    
+    
+    
+    
+        <link rel="stylesheet" href="../css/style.css">
+
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="../../js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../js/jquery.confirm.min.js"></script>
+    <script type="text/javascript" src="../js/org.js"></script>
+<script type="text/javascript">   
+        function ajaxCall() {
+        var user = $('#user').val();
+        var pass = $('#password').val();
+        var data = {uname: user, password: pass};
+        $.ajax({
+            type: "GET",
+            data: data,
+            url: base_domain + "api/login?i=webapi&l=en&a=cf",
+            success: function(rs) {
+                var elements = JSON.parse(rs);
+                var status = elements['status']['code'];
+                if( status != 0) {
+                    alert(elements['status']['message']);
+                }else{
+                    var token = elements['token'];
+                    var cookies = '';
+                    cookies = 'sp_m_token=' + token + '; ';
+                    
+                    var expire = new Date();
+                    expire.setTime( expire.getTime() + 1000 * 3600 * 24 * 365);
+                    expire.toUTCString();
+                    
+                    cookies += 'expires=' + expire+'; path=/';
+                
+                    document.cookie = cookies;
+                    
+                    cookies = 'u_nam=' + user + '; ';
+                    cookies += 'expires=' + expire+'; path=/';
+                    document.cookie = cookies;
+                    
+                    window.location.href = base_domain + 'web/top/';
+                }
+            },
+            error: function(rs) {
+            }
+        });
+        return true;
+    }
+</script>
+
+  </head>
+
+  <body>
+
+    <div class="form-wrapper">
+  <h1>Login</h1>
+    <div class="form-item">
+      <label for="user"></label>
+      <input type="text" name="user" id="user" required="required" placeholder="User ID"></input>
+    </div>
+    <div class="form-item">
+      <label for="password"></label>
+      <input type="password" name="password" id="password" required="required" placeholder="Password"></input>
+    </div>
+    <div class="button-panel">
+      <input type="submit" class="button" title="Login" value="Login" onclick="ajaxCall();"></input>
+    </div>
+  <div class="form-footer">
+    <p>Smart Plate</p>
+  </div>
+</div>
+    
+    
+    
+    
+    
+  </body>
+</html>

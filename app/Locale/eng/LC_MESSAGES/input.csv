@@ -1,0 +1,263 @@
+1パッケージでプレート50枚になります,50 plates / 1 package
+CVSファイルオープン中にエラーが発生しました。,Open CSV file error.
+アカウント,account
+アカウントが削除されました。,Delete account.
+アカウントのIDは無効です。,Invalid account id.
+アカウントのIDを提供してください。,Please select account.
+アカウントをアップデートすることはできません。,Can't update account
+アカウントを削除することはできません。,Can't delete account
+アカウントを保存しました,Save account
+アカウント一覧,Account list
+アカウント一覧へ,Account list
+アカウント詳細,Account detail
+アカウント登録,Regist account
+アカウント編集,Edit account
+アクセス総数,Total access
+アクセス状況,Access status 
+アクティベーションコード,Activation cord:
+アプリアカウントのIDは無効です。,Invalid application account.
+アプリアカウントのIDを提供してください。,Please select application account.
+アプリアカウント一覧,Application account list
+アプリアカウント総数,Total application account
+アプリアカウント用ラベル一覧,Label list for appication account
+アプリ管理,Application management
+アプリを管理モードで使用する,Use appication by management mode
+依頼日,Order date
+エラーが発生しました。ご注文内容はまだ保存されていません。,error: Do not save order data.
+お取り引き状況の管理,Dealings situation
+クラウド管理,Cloud management
+クラウドアカウント一覧,Cloud account list
+クラウドアカウント一覧へ,Cloud account list
+クリア,Clear
+このアカウントは既に存在します。,This account has already registered.
+このフィールドを入力してください。,Please input this field.
+このプロジェクトは既に存在します。,This project has already registered.
+このラベルは既に存在します。,This label has already registered.
+コメント,Comment
+コンテンツ,Contents
+コンテンツ管理,Contents management
+コンテンツが削除されました。,Content has been deleted.
+コンテンツのIDは無効です。,Invalid content.
+コンテンツのIDを提供してください。,Please select content.
+コンテンツのアップデートに成功しました。,Content updated.
+コンテンツをアップデートすることはできません。,Can not update content.
+コンテンツを削除することはできません。,Can not delete content.
+コンテンツ一覧,Content list
+コンテンツ一覧へ,Content list
+コンテンツ稼働状況,Content operational status
+コンテンツ修正,Edit content 
+コンテンツ詳細,Content detail
+コンテンツ新規登録,New content
+コンテンツ用ラベル一覧,Label list for content
+タグ識別子,Tag identifier
+だけを表示,show only
+ダッシュボード,Dashboard
+チーム,Team
+のコンテンツを変更する,change content 
+のバーコードを変更する,change barcode
+のラベルを変更する,change label
+のラベル名を変更する,change label name
+の管理アカウントを変更する,change the management account
+の管理名を変更する,change the management name
+の種別を変更する,change kind
+の名前を変更する,change name
+バーコード,Barcode
+パスワード変更,Change password
+パスワード,Password
+パスワードが変更されました。,Password updated.
+パスワードは無効です。,Invalid password.
+発注一覧,Order list
+パッケージ,Package
+パッケージ数,Packages
+ファイルのアップデートに成功しました。,Image file updated.
+プレート,Plate
+プレート管理,Plate management
+プレートIDのみ取得,Get only plate ID
+プレートが削除されました,Plate has been deleted.
+プレートのIDは無効です。,Invalid plate.
+プレートのIDを提供してください。,Please select plate.
+プレートのアップデートに成功しました。,Plate updated.
+プレートをアップデートすることはできません。,Can not update plate.
+プレートを削除することはできません。,Can not delete plate.
+プレート一覧,Plate list
+プレート一覧へ,Plate list
+プレート稼働状況,Plate  operational status.
+プレート詳細,Plate detail
+プレート申請,Order Plate
+プレート編集,Edit plate
+プレート発行,Plate issue
+プレート用ラベル一覧,Label list for plate
+プラン,Plan
+プロジェクト,Project
+プロジェクトが削除されました。,Project has been deleted.
+プロジェクトのIDを入力してください。,Please select project.
+プロジェクトのアップデートに成功しました。,Project updated.
+プロジェクトをアップデートすることはできません。,Can not update project.
+プロジェクトを削除することはできません。,Can not delete project.
+プロジェクト一覧,Project list
+プロジェクト一覧へ,Project list
+プロジェクト管理,Project management
+プロジェクト詳細,Project detail
+プロジェクト数,Projects
+プロジェクト登録,New project
+プロジェクト編集,Edit project
+プロジェクト名,Project name
+プロジェクト用ラベル一覧,Label list for project
+編集,Edit
+メール,mail
+ユーザー詳細,User detail
+ユーザー登録,New user
+ユーザー編集,Edit user
+ユーザー名,User name
+ユーザー名またはパスワードは無効です。,Invalid username or password
+ラベル,Label
+ラベルが削除されました。,Label has been deleted.
+ラベルが重複しています。もう一度やり直してください。,Label is duplicated. Please try again.
+ラベルのIDは無効です。,Invalid Label.
+ラベルのIDを提供してください。,Please input or select lavel.
+ラベルのアップデートに成功しました。,Label updated.
+ラベルをアップデートすることはできません。,Can not update label.
+ラベルを選択,Select label
+ラベル編集,Edit label
+ラベル名,Label name
+ランキング,Ranking
+リセット,Reset
+リンク,Link
+リンク先,Link
+ログアウト,Logout
+ログイン,Login
+ログインID,Login ID
+ログインパスワード変更,Change password
+を削除する,to delete
+を無効・有効にする,to valid/invalid
+以外を表示,display other than
+位置情報,Location information
+位置情報取得,Get location information
+英語,English
+円,JPY
+下の階層にラベルがあります。すべて削除されますがよろしいですか？,This label has the child label. Are you sure you want to delete them?
+稼働コンテンツ,Active contents
+稼働コンテンツ数 当月,Active contents (Present month)
+稼働コンテンツ総数 当月,All active contents (Present month)
+稼働プレート,Active plates
+稼働プレート数 当月,Active plates (Present month)
+稼働プレート総数 当月,All active plates (Present month)
+稼働プロジェクト数 当月,Active projects (Present month)
+画像,Image
+会社名,Company name
+確認,Confirm
+管理アカウント,Management account
+管理アカウント数,Management accounts
+管理コンテンツ数,Management contents
+管理プレート数,Management plates
+管理ユーザ,Management user
+管理名,Management name
+金額,Price
+月,Month
+月を選択,Select a month
+件,items
+件中,of 
+検索,Search
+言語,Language
+言語選択,Select language
+更新日時,Date Modified
+絞り込み条件,Narrowing condition
+国,Country
+国を選択,Select your country
+今までのパスワード,Old password
+今月のプラチナプレート（アクセス1000超）数,This month of platinum plate (access 1000 over)
+再度メール記入を確認ください。,Please check your email again.
+最終更新日,Last update
+最新アクセス,Latest access
+最新ログイン,Latest login
+最新起動日,Latest start
+最新設定日,Latest update
+使用者名,User name
+指定したパスのアクセス許可を持っていません,Not have the permission
+指定しない,unspecified
+氏,Family name
+時,hour
+時点,point in time
+社名,Company name
+種別,Kind
+種別を選択,Choose kind
+住所,Address
+所属ユーザー数,Members
+少なくとも１つの項目を選択してください,Please select at least one item
+詳細,Detail
+状態,Status
+状態を選択,Choose status          
+新しいパスワード,New password
+新しいパスワード再入力,Input new password again
+新規アカウントを作成することはできません。,Can't create a new account.
+新規アカウントを登録,Register a new account.
+新規コンテンツを登録,Register a new content.
+新規コンテンツを登録することはできません。,Can't register a new content.
+新規プロジェクトを登録,Register a new project.
+新規プロジェクトを登録することはできません。,Can't register a new project.
+新規ラベルを作成することはできません。,Can't create a new label
+新規ラベルを登録することはできません。,Can't register a new label.
+新規注文のアップデートに成功しました。,Succeeded to update the new order.
+申請,Request
+申請パッケージ数,Request number of packages
+数値以外のIDです。,Invalid ID.
+請求管理,Invoice management
+請求管理へ,Invoice management
+請求済,Invoiced
+請求書のIDは無効です。,Invalid invoice ID.
+請求書のIDを提供してください。,Please provide the ID of the invoice.
+請求年月,Invoice date
+設定,Setting
+設定アカウント,Setting account
+選択,Select
+選択した項目を削除してもよろしいですか？,Delete the selected item?
+選択項目,Selected item
+担当者,Person in charge
+地域,Region
+中国語-簡体字,Chinese - Simplified
+中国語-繁体字,Chinese - Traditional
+適用,Enter
+電話,Telephone
+登録コンテンツ数,Number of registered content
+登録プレート数,Number of registered plate
+登録プロジェクト数,Number of registered project
+登録更新日,Registration Date
+登録情報,Registration info
+登録日,Registration Date
+都市,City
+当月,Present month
+当月アクセス数,Present month access
+当月アクセス総数,Present month all access
+当月稼働コンテンツ,Active contents (Present month)
+当月稼働プレート,Active plates (Present month)
+日,day
+日本語,Japanese
+入金済,Payment settled
+年,year
+年を選択,year select
+配信コンテンツID,Delivery content ID      
+配信プレート数,Delivery plates
+必須,Required
+秒,sec
+部署,Department
+部署名,Department name
+分,min
+本日,Today
+無効,Invalid
+名,Given name
+名前,Name
+有効,Valid
+有効なイメージを提供してください。,Invalid image file.
+有効なメールではありません。,Invalid mail address.
+有効な電話番号ではありません。,Invalid mail telephone number.
+郵便番号,Postal code
+累計,Total
+通常,Normal
+OS,OS
+タイルズ,Tiles
+ランダム,Random
+ローテーション,Rotation
+リダイレクトタイプ,Redirect type
+変更,Change
+を割当てる,assign
+ご利用規約とプライバシーポリシー,Privacy Policy and Terms of Use

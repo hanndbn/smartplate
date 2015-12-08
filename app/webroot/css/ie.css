@@ -1,0 +1,15 @@
+/* 
+    Document   : ie
+    Created on : Oct 9, 2014, 9:04:13 AM
+    Author     : hung
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+#login, .logout, .w-user{
+    margin-right: 10px !important;
+}
+.checkbox input[type=checkbox] {
+    position: relative !important;
+}
+

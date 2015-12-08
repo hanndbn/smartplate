@@ -1,0 +1,145 @@
+{
+    "tutorial": [
+        {
+            "data": [
+                {
+                    "image": "1.png", 
+                    "text": "Smart Plate is a programmable 'Physical Bookmark' on the IoT which connects directly everything/everywhere with varied digital content like SNS, videos, maps, contact information, product information, entertainment content, etc. via unique QR code or embedded NFC tag. Plates are trackable and controllable on the app over-the-air anytime even if you are not there, and are capable of being overwritten repeatedly. All plates store an activation code and geocode for copy protection purpose."
+                }, 
+                {
+                    "image": "sp_card.png", 
+                    "text": "Card Type"
+                }, 
+                {
+                    "image": "sp_cuccu.png", 
+                    "text": "Cuccu Type"
+                }
+            ], 
+            "title": "What is SmartPlate?"
+        }, 
+        {
+            "data": [
+                {
+                    "image": "3.png", 
+                    "text": "Just tap NFC smartphones※ or scan QR code. No need installing specific app to get content except general barcode scanner. ※
+※In the case of NFC, you must need the state is on and unlock the screen.
+※In case of delivery via BLE(Bluetooth Low Energy) Beacon, as an option, require specific app to install."
+                }, 
+                {
+                    "image": "4.png", 
+                    "text": ""
+                }, 
+                {
+                    "image": "5.png", 
+                    "text": ""
+                }
+            ], 
+            "title": "How to use"
+        },
+        {
+            "data": [
+                {
+                    "image": "25.png", 
+                    "text": "【Add Content】
+
+When you tap the 'Add Content' from the menu on the left, can create variety contents.
+Single Mode：Configure one URL, and then access to it when you tap the plate.
+Tiles Mode：Up to 8 can set the URL, access to the page that tiled link icon for each URL, when you tap the plate.  
+Random Mode：Up to 8 can set the URL, access to the randomly selected page from the URL that you have set, when you tap the plate.
+Rotation Mode：Up to 8 can set the URL, access to the rotationally selected page from the URL that you have set, when you tap the plate.
+Switch Mode：Can set the three URLs that Android, iOS, Other. Access to the each page by the OS, when you tap the plate."
+                },
+                {
+                    "image": "6.png", 
+                    "text": "【Content List】
+
+When you tap the 'Content List' from the menu on the left, the category and list of the content that registered in the management screen are displayed. Tap the content appears content detail screen."
+                }, 
+                {
+                    "image": "8.png", 
+                    "text": "【Content Detail】
+
+In the content detail screen, you can check the content image, name, linked information, the plate information that is relevant.
+Press the 'Link via Smart Plate' button and holding up the Smart Plate (NFC compatible handsets only) or scan the QR code, you can link it."
+                }
+            ], 
+            "title": "About Content"
+        }, 
+        {
+            "data": [
+                {
+                    "image": "9.png", 
+                    "text": "【Plate List】
+
+When you tap the 'Plate List' from the menu on the left, the category and list of the plate that registered in the management screen are displayed. Tap the plate appears plate detail screen."
+                }, 
+                {
+                    "image": "10.png", 
+                    "text": "【Plate Detail】
+
+In the plate detail screen, you can check the plate image, name, linked information, the content information that is relevant.
+Press the 'Set Content' button and select the content, you can link it."
+                }, 
+                {
+                    "image": "12.png", 
+                    "text": "【Activate】
+
+When you tap the 'Activate' from the menu on the left, the activate screen is displayed. Tap the content appears content detail screen.The plate hold up, or to scan the QR code. Then you can register by entering the activation code that is described in the plate."
+                }
+            ], 
+            "title": "About Plate"
+        }, 
+        {
+            "data": [
+                {
+                    "image": "13.png", 
+                    "text": "【Link】
+                    
+You can link to tap the button of the red frame of the each detail screen.
+Also, information in real time is updated without re-link when you edit the contents after the link."
+                }
+            ], 
+            "title": "Link the content and the plate"
+        }, 
+        {
+            "data": [
+                {
+                    "image": "18.png", 
+                    "text": "【Analytics】
+                    
+When you tap each period of the home screen, can check the content or plate analytics information. It is displayed daily number of taps, number of unique users, tap count of NFC and QR code, etc. When you tap the rankings to switch to display in the content or plate units. Also when you tap the duration of the bar graph, can check A 24-hour display of that day."
+                },
+                {
+                    "image": "19.png", 
+                    "text": "【Analytics of every hour】
+                    
+Can check the content, or usage of the plate every hour."
+                },
+                {
+                    "image": "20.png", 
+                    "text": "【Analytics of every minute】
+                    
+Can check the content, or usage of the plate every minute."
+                }
+            ], 
+            "title": "Tracking"
+        }, 
+        {
+            "data": [
+                {
+                    "image": "26.png", 
+                    "text": "【Purchase Plate】
+
+When you tap the 'Purchase Plates' from the menu on the left, displayed the list of sites that sell the plate. Tap and can go to the site."
+                },
+                {
+                    "image": "27.png", 
+                    "text": "【Point Management】
+
+When you tap the 'Purchase Plates' from the menu on the left, Confirmation of the current holdings point, you can make the purchase of points. Points are required for the period extension of the plate. Also it's required to release the function of Adding content."
+                }
+            ], 
+            "title": "Other"
+        }
+    ]
+}

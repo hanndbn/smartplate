@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html >
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
+    <title>SmartPlate</title>
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="../../js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../js/jquery.confirm.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/datepicker.css" />
+    
+    <link rel="stylesheet" href="../css/style.css">
+    
+    <style>
+    
+    #canvas-holder {
+        width: 80%;
+        padding-left:20%;
+    }
+    a{border-bottom: 1px dotted;}
+
+    div#user {
+        text-align: left;    
+      padding: 5px 0px;
+    }
+    
+    div.analytics {  
+      padding: 5px 0px;
+    }
+    
+    .cal{
+     cursor : pointer;
+     float : right;
+     width : 30px;
+     height : 29px;
+      padding: 5px 0px;
+     background-image: url(../../img/calender.png);
+    }
+
+    </style>
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="../../js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../js/jquery.confirm.min.js"></script>
+    <script type="text/javascript" src="../js/org.js"></script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    
+<script type="text/javascript"> 
+
+    var count =2;
+    var elements;
+    var start_date;
+    
+     function getData() {
+            
+        var cookies = document.cookie;
+        var token = '';
+        var user = '';
+        if(cookies != ''){
+           var cookieArray = cookies.split(';');
+           for(var i = 0; i < cookieArray.length; i++){
+            var cookie = cookieArray[i].split('=');
+            if( cookie[0].replace(/\s+/g, "") == 'sp_m_token' ){
+                token = cookie[1];
+            }
+            if( cookie[0].replace(/\s+/g, "") == 'u_nam' ){
+                user = cookie[1];
+            }
+            if( cookie[0].replace(/\s+/g, "") == 'start_date' ){
+                start_date = cookie[1];
+            }
+           }
+        }
+       $('#user').append(user);
+        var data = { t:token };
+        
+        $.ajax({
+            type: "GET",
+            data: data,
+            url: base_domain + "api/analytics/top_count?i=webapi&l=en&a=cf",
+            success: function(rs) {
+                elements = JSON.parse(rs);
+                var status = elements['status']['code'];
+                if( status != 0) {
+                    elements = null;
+                    alert(elements['status']['message']);
+                }else{
+                    var daily_data = elements['analytics']['daily'];
+                    var weekly_data = elements['analytics']['weekly'];
+                    var monthly_data = elements['analytics']['monthly'];
+                    var total_data = elements['analytics']['total'];
+                    $('#today').append(daily_data);
+                    $('#seven_days').append(weekly_data);
+                    $('#thiety_days').append(monthly_data);
+                    $('#total').append(total_data);
+                }
+            },
+            error: function(rs) {
+            }
+        });
+        
+        $.ajax({
+            type: "GET",
+            data: data,
+            url: base_domain + "api/analytics/unique_user?i=webapi&l=en&a=cf",
+            success: function(rs) {
+                elements = JSON.parse(rs);
+                var status = elements['status']['code'];
+                if( status != 0) {
+                    elements = null;
+                    alert(elements['status']['message']);
+                }else{
+                    var unique_user = elements['analytics']['unique_user'];
+                    var new_user = elements['analytics']['new_user'];
+                    var repeat_user = elements['analytics']['repeat_user'];
+                    $('#unique_user').append(unique_user);
+                    $('#new_user').append(new_user);
+                    $('#repeat_user').append(repeat_user);
+                }
+            },
+            error: function(rs) {
+            }
+        });
+        
+        $.ajax({
+            type: "GET",
+            data: data,
+            url: base_domain + "api/analytics/custom?i=webapi&l=en&a=cf",
+            success: function(rs) {
+                elements = JSON.parse(rs);
+                var status = elements['status']['code'];
+                if( status != 0) {
+                    elements = null;
+                    alert(elements['status']['message']);
+                }else{
+                    var custom_data = elements['analytics']['custom'];
+                    for( i=0; i < custom_data.length; i ++ ){
+                    
+                        title = custom_data[i]['title'];
+                        $('#custom').append('<div class="div020-hpl"><h3>'+ title +'</h3><ol id="ol'+i+'">');
+                        row_data = custom_data[i]['data'];
+                        for( j=0; j < row_data.length; j ++ ){
+                            $('#ol'+i).append('<li>'+ row_data[j]['name'] +' : ' + row_data[j]['count'] + '</li>');
+                        }
+                        $('#custom').append('</dl></div>');
+                    }
+                }
+            },
+            error: function(rs) {
+            }
+        });
+        return true;
+    }
+    
+    
+    window.onload = function() {
+        getData();
+  /*      
+        $('#cal').click(function(){
+            $("#cal").datepicker({
+                defaultDate: "+1w",
+                inline: true,
+                numberOfMonths: 1,
+                dateFormat: 'yy-mm-dd',
+                maxDate: 0,
+                onClose: function(selectedDate) {
+                    start_date = selectedDate;
+                }
+            });
+        });*/
+    };
+    
+     
+</script>
+
+  </head>
+
+  <body>
+
+    <div class="form-wrapper">
+  <h1>Smart Plate</h1>
+ <!-- <div id="cal" class="cal">
+  </div> -->
+  <div id="user"></div>
+  <div class="analytics">
+      <table class="count">
+          <tr><th class="total">total</th><th class="thiety_days">30days</th></tr>
+          <tr><td class="total" id="total"></td><td class="thiety_days" id="thiety_days"></td></tr>
+          <tr><th class="today">today</th><th class="seven_days">7days</th></tr>
+          <tr><td class="today" id="today"></td><td class="seven_days" id="seven_days"></td></tr>
+      </table>    
+  </div>
+  <div class="analytics">
+      <table class="count">
+          <tr><th class="total" colspan=2>Unique User</th></tr>
+          <tr><td class="total" colspan=2 id="unique_user" style="text-align: center;"></td></tr>
+        <!--  <tr><th class="today">Newer</th><th class="seven_days">Repeater</th></tr>
+          <tr><td class="today" id="new_user"></td><td class="seven_days" id="repeat_user"></td></tr> -->
+      </table>    
+  </div>
+  <div id="custom">
+      
+  </div>
+  <div class="form-footer">
+    <p><a href="/web/activate">Activation Smart Plate</a></p>
+  </div>
+</div>
+    
+    
+    
+    
+    
+  </body>
+</html>

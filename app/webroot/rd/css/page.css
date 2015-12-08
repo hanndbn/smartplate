@@ -1,0 +1,110 @@
+@charset "UTF-8";
+
+/* basic setting
+---------------------------------------*/
+
+.aquabit { color: #e83416; }
+
+iframe {
+	max-width: 100%;
+}
+
+/* all */
+
+@font-face {
+  font-family: 'Carrois Gothic';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Carrois Gothic'), local('CarroisGothic-Regular'), url(http://themes.googleusercontent.com/static/fonts/carroisgothic/v2/GCgb7bssGpwp7V5ynxmWy1munQUHE-w7pdt7tji1XYk.woff) format('woff');
+}
+
+body {
+	font-family: 'Carrois Gothic', 'Verdana', 'Hiragino Kaku Gothic ProN', 'ヒラギノ角ゴ ProN W3', Meiryo, メイリオ, san-serif;
+	font-size: 16px;
+	line-height: 1.5em;
+	word-break: word-break; 
+	text-justify: newspaper;
+	text-align: justify;
+	color:#ccc;
+	height:100%;
+	background-color: #fff;
+}
+
+a:link    {text-decoration: none; color:#666;}
+a:visited {text-decoration: none; color:#666;}
+a:hover   {text-decoration: none; color:#666;}
+a:active  {text-decoration: none; color:#999;}
+
+input.textForm {
+	font-size:1.2em;
+	border: solid 1px #ccc;
+	width: 95%;
+	padding: 3px;
+}
+
+
+/* header */
+header {
+	border-bottom: #fff solid 0px;
+	line-height: 2em;
+}
+
+
+
+#spheaderSplash{
+	display: block;
+	margin : 0px;
+	padding: 2px;
+	background-color: #fff;
+	font-size : 14px !important;
+	height: 24px;
+}
+
+#spheader{
+	display: block;
+	margin : 0px;
+	padding: 2px;
+	background-color: #fff;
+	font-size : 14px !important;
+	height: 24px;
+}
+#spheader p.lt{
+	float: left;
+	text-align: left;
+}
+#spheader p.rt{
+	float: right;
+	text-align: right;
+}
+
+
+#spmain{
+	display: block;
+	position: absolute;
+	top: 24px;
+	left: 0;
+	width: 100% !important;
+	height: 100% !important;
+	background: url(../images/logo-smartplate.png) no-repeat center center;
+	background-size: 80% auto; 
+	border: 0px;
+}
+
+
+
+
+footer {
+	width: 100%;
+	color: #fff;
+	border-top: #fff solid 1px;
+	font-size: 12px;
+	text-align: center;
+	margin: 0;
+	margin-top: 10px;
+	line-height: 2em;
+}
+
+footer a:link { text-decoration: underline; color:#fff; }
+footer a:visited { text-decoration: underline; color:#fff; }
+footer a:hover { text-decoration: underline; color:#fff; }
+footer a:active { text-decoration: underline; color:#fff; }

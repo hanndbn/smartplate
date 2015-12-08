@@ -1,0 +1,20 @@
+{
+    "points": [
+        {
+            "target": "2", 
+            "point": "250"
+        }, 
+        {
+            "target": "5", 
+            "point": "150"
+        }, 
+        {
+            "target": "6", 
+            "point": "100"
+        }
+    ], 
+    "status": {
+        "code": "0", 
+        "message": ""
+    }
+}
