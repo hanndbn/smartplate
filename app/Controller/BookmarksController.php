@@ -916,7 +916,9 @@ class BookmarksController extends AppController
         if (!$this->request->data) {
             $this->request->data = $bookmark;
         }
-		$this->set ( 'bookmarkExtData', $bookmarkExtData ['BookmarkExtData'] );
+        if(isset($bookmarkExtData ['BookmarkExtData'])){
+		    $this->set ( 'bookmarkExtData', $bookmarkExtData ['BookmarkExtData'] );
+        }
         $this->set('bookmark', $bookmark);
     }
 

@@ -80,10 +80,24 @@ $team_id = ($this->request->prefix == 'system') ? '' : $session['team_id'];
             <a id="quickAction-btn" style="display:none;" href="#" class="imgBtn wide m-l-sm"><?php echo __('設定') ?></a>
         </td>
         <td class="pull-right">
-            <input type="text" id="from" name="from" style="width: 100px; height: 25px;">
+            <div class="inline-block">
+                <?php echo $this->Form->create("FilterFollowDate", array('url' => $base_url, 'role' => "form")); ?>
+
+                <div class="inline-block">
+                    <?php echo $this->Form->input("from", array('label' => false, 'type' => 'text', 'style' => 'width: 100px; height: 25px;', 'id' => 'from')); ?>
+                </div>
+                <div class="inline-block">
+                    <?php echo $this->Form->input("to", array('label' => '～', 'type' => 'text', 'style' => 'width: 100px; height: 25px;', 'id' => 'to')); ?>
+                </div>
+                <div class="inline-block">
+                    <?php  echo $this->Form->submit(__('Confirm'), array('style' => 'margin-right: 50px;', 'class' => 'imgBtn wide hightlight-btn m-sm', 'id' => 'datePickerBtn')); ?>
+                </div>
+                <?php echo $this->Form->end(); ?>
+            </div>
+<!--            <input type="text" id="from" name="from" style="width: 100px; height: 25px;">
             <label for="to">～</label>
             <input type="text" id="to" name="to" style="width: 100px; height: 25px;">
-            <input type="button" id="datePickerBtn" class="imgBtn wide hightlight-btn m-sm" value="Confirm" style="margin-right: 50px;">
+            <input type="button" id="datePickerBtn" class="imgBtn wide hightlight-btn m-sm" value="Confirm" style="margin-right: 50px;">-->
             <?php echo $this->Html->link(__('プレート申請'), array('controller' => 'orders', 'action' => 'orderRegist'), array('id' => 'dialog_order_open', 'class' => 'imgBtn wide', 'data-toggle' => 'ajaxModal')); ?>
         </td>
     </tr>
@@ -308,7 +322,14 @@ $(document).ready(function () {
         var label = $('.label_name[data-id*=' + $.urlParam('label').replace(/\%20/g, ' ') + ']').html();
         $('#pLabel').html(label);
     }
-
+    if ($.urlParam('from') != null) {
+        var from = $('.label_name[data-id*=' + $.urlParam('label').replace(/\%20/g, ' ') + ']').html();
+        $('#pLabel').html(label);
+    }
+    if ($.urlParam('to') != null) {
+        var to = $('.label_name[data-id*=' + $.urlParam('label').replace(/\%20/g, ' ') + ']').html();
+        $('#pLabel').html(label);
+    }
     // Get label selection id
     $('.label_name').click(function (e) {
         e.preventDefault();
@@ -543,29 +564,14 @@ $(document).ready(function () {
             $("#from").datepicker("option", "maxDate", selectedDate);
         }
     });
-    $('#datePickerBtn').click(function() {
-        var fromVal = $('#from').val(),
-            toVal = $('#to').val();
-        if (fromVal == '' || toVal == '') {
-            alert('<?php echo __('Input date should not be empty.') ?>');
-            return false;
-        } else {
-            var data = {from: fromVal, to: toVal},
-                web_root = "<?php echo $this->webroot ?>",
-                now = new Date().getTime(),
-                url = buildUrl(web_root + "tags/ajaxFilterPlate", '_t', now);
-            $.ajax({
-                type: "POST",
-                data: data,
-                url: url,
-                success: function(rs) {
-                    
-                },
-                error: function() {
-                }
-            });
-        }
-    });
+//    $('#datePickerBtn').click(function() {
+//        var fromVal = $('#from').val(),
+//            toVal = $('#to').val();
+//        if (fromVal == '' || toVal == '') {
+//            alert('<?php //echo __('Input date should not be empty.') ?>//');
+//            return false;
+//        }
+//    });
 
 });
 </script>

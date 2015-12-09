@@ -237,7 +237,7 @@ for ($i = 0; $i < 8; $i++) {
                                                 <div class="url col-sm-12">
                                                     <?php echo $this->Form->input("Link" . ($i) . "url", array('div' => false, 'label' => 'Url', 'name' => "data[Link][Btn][" . ($i) . "][url]", 'type' => 'text', 'value' => isset($linkType2[$i]['Link']['url']) ? $linkType2[$i]['Link']['url'] : '', 'maxlength' => '1024'));?>
                                                 </div></td>
-                                                <td class="icon text-center" data-number="<?php echo($i) ?>"><label for="BookmarkLink2icon">Icon</label><?php echo (isset($linkType2[$i]['Link']['icon'])) ? '<img class="img-thumbnail" src="/img/icon/thumb/' . $linkType2[$i]['Link']['icon'] . '.png" />' : '<img class="default img-thumbnail" />';
+                                                <td class="icon text-center" data-number="<?php echo($i) ?>"><label for="BookmarkLink2icon" style="display: block">Icon</label><?php echo (isset($linkType2[$i]['Link']['icon'])) ? '<img class="img-thumbnail" src="/img/icon/thumb/' . $linkType2[$i]['Link']['icon'] . '.png" />' : '<img class="default img-thumbnail" />';
                                                 ?></td>
                                                 <?php echo $this->Form->input('Link.icon.' . ($i), array('div' => false, 'type' => 'hidden', 'name' => "data[Link][Btn][" . ($i) . "][icon]", 'value' => (isset($linkType2[$i]['Link']['icon']) ? $linkType2[$i]['Link']['icon'] . '.png' : '')));?>
                                             </tr>
@@ -563,8 +563,7 @@ var iconSelected = $('.listicon img.selected'),
 iconName,
 imgPath,
 imgTag;
-var baseUrl = '<?php echo $this->webroot ?>
-    ';
+var baseUrl = '<?php echo $this->webroot ?>';
     if(iconSelected.length > 0) {
         iconName = iconSelected.closest('span').data('icon');
         imgPath = $('.icon[data-number|=' + typeIconSelect + ']');

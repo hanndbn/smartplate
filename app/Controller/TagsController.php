@@ -108,6 +108,10 @@ class TagsController extends AppController
             ),
             'fields' => array('User.id', 'User.name')
         ));
+        // flag filter NFC QR follow date
+        $flgFilterFollowDate = false;
+        $dateFrom = null;
+        $dateTo = null;
 
         // Filter
         $conditions = array();
@@ -132,7 +136,31 @@ class TagsController extends AppController
             // we'll redirect to that page
             $this->Session->write('Access.filter.tag', $filter_url);
             return $this->redirect($filter_url);
-        } else {
+        } else if (($this->request->is('post') || $this->request->is('put')) && isset($this->data['FilterFollowDate'])) {
+            $filter_url['controller'] = $this->request->params['controller'];
+            $filter_url['action'] = $this->request->params['action'];
+            // We need to overwrite the page every time we change the parameters
+            $filter_url['page'] = 1;
+            $filter_url['filter'] = 'FilterFollowDate';
+
+            // for each filter we will add a GET parameter for the generated url
+            if (isset($this->data['FilterFollowDate'])) {
+                foreach ($this->data['FilterFollowDate'] as $name => $value) {
+                    if ($value != trim('')) {
+                        // You might want to sanitize the $value here
+                        // or even do a urlencode to be sure
+                        $filter_url[$name] = Utility_Str::escapehtml($value);
+                    }
+                }
+            }
+
+            // now that we have generated an url with GET parameters,
+            // we'll redirect to that page
+            $this->Session->write('Access.filter.tag', $filter_url);
+
+            return $this->redirect($filter_url);
+        }
+        else {
             // Inspect all the named parameters to apply the filters
             $joins = array();
             $need_clear_fileter = true;
@@ -142,7 +170,16 @@ class TagsController extends AppController
                 if (!in_array($param_name, array('page', 'sort', 'direction', 'limit', 'act'))) {
                     // You may use a switch here to make special filters
                     // like "between dates", "greater than", etc
-                    if ($param_name == "name") {
+                    if(in_array($param_name, array('filter', 'from', 'to'))) {
+                        $flgFilterFollowDate = true;
+                        if($param_name == 'from'){
+                            $dateFrom = date('Y-m-d', strtotime($value));
+                        } elseif($param_name == 'to'){
+                            $dateTo = date('Y-m-d', strtotime($value));
+                        } else{
+                            continue;
+                        }
+                    } elseif ($param_name == "name") {
                         $conditions += array(
                             array('OR' => array(
                                 array('Tag.tag LIKE' => '%' . str_replace('%', '\%', $value) . '%'),
@@ -211,13 +248,23 @@ class TagsController extends AppController
             }
         }
 
-        $this->paginate = array(
-            'limit' => 20,
-            'order' => array('id' => 'asc'),
-            'joins' => $joins,
-            'conditions' => $conditions,
-            'group' => 'Tag.id'
-        );
+        if($flgFilterFollowDate){
+            $this->paginate = array(
+                'limit' => '20',
+                'order' => array('id' => 'asc'),
+                'joins' => $joins,
+                'conditions' => $conditions,
+                'group' => 'Tag.id'
+            );
+        } else {
+            $this->paginate = array(
+                'limit' => '20',
+                'order' => array('id' => 'asc'),
+                'joins' => $joins,
+                'conditions' => $conditions,
+                'group' => 'Tag.id'
+            );
+        }
         /* end filter */
         if (isset($this->params['named']['act']) && $this->params['named']['act'] == 'export') {
             $tagsExport = $this->Tag->find('all', array(
@@ -283,24 +330,46 @@ class TagsController extends AppController
                 ));
                 $tag['Access_total'] = isset($a_total) ? $a_total : 0;
 
-                /* Get Tag type */
-                //Get NFC
-                $tag_nfc = $this->AccessLog->find('count', array(
-                    'fields' => array('AccessLog.p_type'),
-                    'conditions' => array(
-                        $concat => $tag_series,
-                        'AccessLog.p_type' => 'N')
-                ));
-                $tag['nfc'] = $tag_nfc;
-                //Get QR
-                $tag_qr = $this->AccessLog->find('count', array(
-                    'fields' => array('AccessLog.p_type'),
-                    'conditions' => array(
-                        $concat => $tag_series,
-                        'AccessLog.p_type' => 'Q')
-                ));
-                $tag['qr'] = $tag_qr;
+                if($flgFilterFollowDate){
 
+                    /* Get Tag type */
+                    //Get NFC
+                    $tag_nfc = $this->AccessLog->find('count', array(
+                        'fields' => array('AccessLog.p_type', 'AccessLog.created_at'),
+                        'conditions' => array(
+                            $concat => $tag_series,
+                            'AccessLog.p_type' => 'N',
+                            'AccessLog.created_at BETWEEN ? AND ?' => array($dateFrom, $dateTo))
+                    ));
+                    $tag['nfc'] = $tag_nfc;
+                    //Get QR
+                    $tag_qr = $this->AccessLog->find('count', array(
+                        'fields' => array('AccessLog.p_type', 'AccessLog.created_at'),
+                        'conditions' => array(
+                            $concat => $tag_series,
+                            'AccessLog.p_type' => 'Q',
+                            'AccessLog.created_at BETWEEN ? AND ?' => array($dateFrom, $dateTo))
+                    ));
+                    $tag['qr'] = $tag_qr;
+                } else {
+                    /* Get Tag type */
+                    //Get NFC
+                    $tag_nfc = $this->AccessLog->find('count', array(
+                        'fields' => array('AccessLog.p_type'),
+                        'conditions' => array(
+                            $concat => $tag_series,
+                            'AccessLog.p_type' => 'N')
+                    ));
+                    $tag['nfc'] = $tag_nfc;
+                    //Get QR
+                    $tag_qr = $this->AccessLog->find('count', array(
+                        'fields' => array('AccessLog.p_type'),
+                        'conditions' => array(
+                            $concat => $tag_series,
+                            'AccessLog.p_type' => 'Q')
+                    ));
+                    $tag['qr'] = $tag_qr;
+                }
                 /* Get user.name */
 
                 $link_user_ids = $this->Link->find('all', array(
@@ -1091,16 +1160,6 @@ class TagsController extends AppController
         return $this->render('/Labels/index');
     }
 
-    public function ajaxFilterPlate()
-    {
-        if ($this->request->is('ajax')) {
-            $input = $this->request->data;
-            $from = isset($input['from']) ? $input['from'] : '';
-            $to = isset($input['to']) ? $input['to'] : '';
-
-            print_r($from); exit;
-        }
-    }
 }
 
 ?>
