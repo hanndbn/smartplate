@@ -122,34 +122,21 @@ class TagsController extends AppController
             // We need to overwrite the page every time we change the parameters
             $filter_url['page'] = 1;
 
+            if(empty($this->data['Filter']['from']) || empty($this->data['Filter']['to'])){
+                $flgFilterFollowDate = false;
+            } else {
+                $flgFilterFollowDate = true;
+            }
+
             // for each filter we will add a GET parameter for the generated url
             if (isset($this->data['Filter'])) {
                 foreach ($this->data['Filter'] as $name => $value) {
                     if ($value != trim('')) {
-                        // You might want to sanitize the $value here
-                        // or even do a urlencode to be sure
-                        $filter_url[$name] = Utility_Str::escapehtml($value);
-                    }
-                }
-            }
-            // now that we have generated an url with GET parameters,
-            // we'll redirect to that page
-            $this->Session->write('Access.filter.tag', $filter_url);
-            return $this->redirect($filter_url);
-        } else if (($this->request->is('post') || $this->request->is('put')) && isset($this->data['FilterFollowDate'])) {
-            $filter_url['controller'] = $this->request->params['controller'];
-            $filter_url['action'] = $this->request->params['action'];
-            // We need to overwrite the page every time we change the parameters
-            $filter_url['page'] = 1;
-            $filter_url['filter'] = 'FilterFollowDate';
-
-            // for each filter we will add a GET parameter for the generated url
-            if (isset($this->data['FilterFollowDate'])) {
-                foreach ($this->data['FilterFollowDate'] as $name => $value) {
-                    if ($value != trim('')) {
-                        // You might want to sanitize the $value here
-                        // or even do a urlencode to be sure
-                        $filter_url[$name] = Utility_Str::escapehtml($value);
+                        if(($flgFilterFollowDate && ($name == "from" || $name == "to")) || (!($name == "from") && !($name == "to"))) {
+                            // You might want to sanitize the $value here
+                            // or even do a urlencode to be sure
+                            $filter_url[$name] = Utility_Str::escapehtml($value);
+                        }
                     }
                 }
             }
@@ -157,7 +144,6 @@ class TagsController extends AppController
             // now that we have generated an url with GET parameters,
             // we'll redirect to that page
             $this->Session->write('Access.filter.tag', $filter_url);
-
             return $this->redirect($filter_url);
         }
         else {
@@ -170,15 +156,10 @@ class TagsController extends AppController
                 if (!in_array($param_name, array('page', 'sort', 'direction', 'limit', 'act'))) {
                     // You may use a switch here to make special filters
                     // like "between dates", "greater than", etc
-                    if(in_array($param_name, array('filter', 'from', 'to'))) {
-                        $flgFilterFollowDate = true;
-                        if($param_name == 'from'){
-                            $dateFrom = date('Y-m-d', strtotime($value));
-                        } elseif($param_name == 'to'){
-                            $dateTo = date('Y-m-d', strtotime($value));
-                        } else{
-                            continue;
-                        }
+                    if($param_name == 'from'){
+                        $dateFrom = date('Y-m-d', strtotime($value));
+                    } elseif($param_name == 'to'){
+                        $dateTo = date('Y-m-d', strtotime($value));
                     } elseif ($param_name == "name") {
                         $conditions += array(
                             array('OR' => array(
@@ -1159,7 +1140,5 @@ class TagsController extends AppController
 
         return $this->render('/Labels/index');
     }
-
 }
-
 ?>
