@@ -48,6 +48,15 @@
                             <?php echo $this->Html->link(__('選択'), array('controller' => 'tags', 'action' => 'quickedit_link_bm', "?id=$id&edit=1"), array('style' => 'margin-top: -10px;', 'id' => 'changeBookmark', 'class' => 'imgBtn pull-right', 'div' => false, 'label' => FALSE, 'data-id' => $id)); ?>
                         </div>
                         <div class="content-detail-wrap p-sm">
+                            <div class="form-group">
+                                <div class="control-label col-sm-3">
+                                            <span><?php echo __('タイトル')
+                                                ?>:</span>
+                                </div>
+                                <div class="detail-code-content col-sm-12">
+                                    <?php echo $this->Form->input("BookmarkExtData.ext_data", array('div' => false, 'label' => false, 'type' => 'text', 'value' => isset($bookmarkExtData['ext_data']) ? $bookmarkExtData['ext_data'] : ''));?>
+                                </div>
+                            </div>
                             <div class="edit-wrap">
                                 <?php
                                 if ($bookmarkContents != null) {
