@@ -111,6 +111,7 @@ class TagsController extends AppController
         ));
         // flag filter NFC QR follow date
         $flgFilterFollowDate = false;
+        $flgFilter = false;
         $dateFrom = null;
         $dateTo = null;
 
@@ -169,7 +170,14 @@ class TagsController extends AppController
                             )
                             )
                         );
-                    } elseif ($param_name == "user") {
+                    } else if($param_name = "filter"){
+                        if($value == 'filter'){
+                            $flgFilter = true;
+                        }
+                        else if($value == 'filterFollowDate')
+                            $flgFilterFollowDate = true;
+                    }
+                    elseif ($param_name == "user") {
                         $joins = array(
                             array(
                                 'table' => 'label_datas',
@@ -230,9 +238,9 @@ class TagsController extends AppController
             }
         }
 
-        if($flgFilterFollowDate){
+        if($flgFilter){
             $this->paginate = array(
-                'limit' => '20',
+                'limit' => 20,
                 'order' => array('id' => 'asc'),
                 'joins' => $joins,
                 'conditions' => $conditions,

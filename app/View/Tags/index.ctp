@@ -129,7 +129,7 @@ $team_id = ($this->request->prefix == 'system') ? '' : $session['team_id'];
                 // Add a basic search
                 echo $this->Form->input("name", array('label' => false, 'placeholder' => "検索キー"));
 
-                echo $this->Form->submit(__('検索'), array('class' => 'imgBtn wide m-sm'));
+                echo $this->Form->submit(__('検索'), array('class' => 'imgBtn wide m-sm', 'id' => 'searchId'));
                 // To reset all the filters we only need to redirect to the base_url
                 echo $this->Html->link(__('リセット'), $base_url, array('class' => 'imgBtn wide subFilter'));
                 if ($this->request->prefix != 'system') {
@@ -566,8 +566,15 @@ $(document).ready(function () {
         if (fromVal == '' || toVal == '') {
             alert('<?php echo __('Input date should not be empty.') ?>');
             return false;
+        } else {
+            var input = $("<input>").attr("type", "hidden").attr("name", "data[Filter][filter]").val("filterFollowDate");
+            $("#FilterIndexForm").append($(input));
         }
     });
 
+    $('#searchId').click(function() {
+        var input = $("<input>").attr("type", "hidden").attr("name", "data[Filter][filter]").val("filter");
+        $("#FilterIndexForm").append($(input));
+    });
 });
 </script>

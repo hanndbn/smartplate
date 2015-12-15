@@ -167,7 +167,7 @@ echo ($action == 'edit') ? __('コンテンツ修正') : __('コンテンツ新�
                                     <div class="image_contenner">
                                         <?php
 if ($action == 'edit') {
-echo ($bookmark['Bookmark']['image']) ? '<img  class="edit img-thumbnail" src="' . Bookmark::imageURL($bookmark['Bookmark']['image']) . '"/><img id="image_delete" src="img/delete.png" height="20px"/>' : '<img class="avatar"/>';
+echo ($bookmark['Bookmark']['image']) ? '<img  class="avatar edit img-thumbnail" src="' . Bookmark::imageURL($bookmark['Bookmark']['image']) . '"/><img id="image_delete" src="/img/delete.png" height="20px"/>' : '<img class="avatar"/>';
 } else {
 echo ' <img src="" class="avatar"/>';
 }
@@ -219,9 +219,35 @@ foreach ($nameOS as $key => $os) {
                                                 ?>:</span>
                                         </div>
                                         <div class="detail-code-content col-sm-12">
-                                            <?php echo $this->Form->input("BookmarkExtData.ext_data", array('div' => false, 'label' => false, 'type' => 'text', 'value' => isset($bookmarkExtData['ext_data']) ? $bookmarkExtData['ext_data'] : ''));?>
+                                            <?php echo $this->Form->input("BookmarkExtData.title", array('div' => false, 'label' => false, 'type' => 'text', 'value' => isset($bookmarkExtData['title']) ? $bookmarkExtData['title'] : ''));?>
                                         </div>
                                     </div>
+
+                                    <!--image title-->
+                                    <div class="col-sm-12">
+                                        <div class="form-group" style = "border: 1px solid #ccc;">
+                                            <div class="control-label col-sm-2">
+                                    <span><?php echo __('画像')
+                                        ?>:</span>
+                                            </div>
+                                            <div class="detail-header-image-content col-sm-10">
+                                                <?php
+                                                echo $this->Form->input('BookmarkExtData.title_header_image', array('type' => 'file', 'id' => "BookmarkHeaderImageUpload", 'div' => false, 'label' => false, 'class' => 'm-b-sm'));
+                                                ?>
+                                                <div class="image_header_contenner">
+                                                    <?php
+                                                    if ($action == 'edit') {
+                                                        echo (isset($bookmarkExtData['title_header_image']) && !empty($bookmarkExtData['title_header_image'])) ? '<img  class="avatarHeader edit img-thumbnail" src="' . Bookmark::imageURL($bookmarkExtData['title_header_image']) . '"/><img id="image_header_delete" src="/img/delete.png" height="20px"/>' : '<img class="avatarHeader"/>';
+                                                    } else {
+                                                        echo ' <img src="" class="avatarHeader"/>';
+                                                    }
+                                                    ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--image title END-->
+
                                     <?php
 for ($i = 0; $i < 8; $i++) {
                                     ?>
@@ -427,6 +453,9 @@ $('.link-content img').attr('src', '').addClass('default');
 $('#image_delete').click(function (e) {
 $('.image_contenner').empty().html('<img class="avatar"/><input type="hidden" name="data[Bookmark][image_deleted]" value=1 />');
 });
+$('#image_header_delete').click(function (e) {
+    $('.image_header_contenner').empty().html('<img class="avatarHeader"/><input type="hidden" name="data[BookmarkExtData][image_header_deleted]" value=1 />');
+});
 $('.label_edit').each(function () {
 var $this = $(this),
 value = $this.attr('data-value');
@@ -463,6 +492,10 @@ $(this).hide();
 
 $('#BookmarkImageUpload').on('change', function () {
 imageURL(this);
+});
+
+$('#BookmarkHeaderImageUpload').on('change', function () {
+    imageHeaderURL(this);
 });
 
 var canUpload = true;
@@ -506,6 +539,41 @@ $('.avatar')
 
 reader.readAsDataURL(input.files[0]);
 }
+}
+
+function imageHeaderURL(input) {
+    var url = input.value,
+        ext = url.substring(url.lastIndexOf('.') + 1).toLowerCase(),
+        _validFileExtensions = ["jpg", "jpeg", "bmp", "gif", "png"];
+
+    canUpload = true;
+
+    if ($('#BookmarkHeaderImageUploadError').length) {
+        $('#BookmarkHeaderImageUploadError').empty().remove();
+    }
+
+    if ($.inArray(ext, _validFileExtensions) == -1) {
+        error = '<span id="BookmarkHeaderImageUploadError" style="color: red;">* The selected file is not valid.</span>';
+
+        $('.detail-header-image-content').append(error);
+
+        canUpload = false;
+
+        return;
+    }
+
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            $('.avatarHeader')
+                .attr('src', e.target.result)
+                .width('200')
+                .height('100');
+        };
+
+        reader.readAsDataURL(input.files[0]);
+    }
 }
 
 $('.icon').on("click", "img", function () {

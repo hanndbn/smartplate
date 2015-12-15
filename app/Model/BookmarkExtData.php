@@ -12,8 +12,8 @@ class BookmarkExtData extends AppModel
     const EXT_TITLE    = 'title';
     const EXT_HEADER   = 'header';
     const EXT_FOOTER   = 'footer';
+    const EXT_TITLE_HEADER_IMAGE   = 'title_header_image';
 
-    public $primaryKey = 'bookmark_id';
     public $useTable = 'bookmark_ext_data';
     public $belongsTo = array(
         'Bookmark' => array('className' => 'Bookmark',

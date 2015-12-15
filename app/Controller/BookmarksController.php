@@ -417,9 +417,38 @@ class BookmarksController extends AppController
                     $new_bm_id = $this->Bookmark->getLastInsertId();
 					// Update bookmark ext data
 					if (isset ( $this->request->data ['BookmarkExtData'] )) {
-						$this->request->data ['BookmarkExtData'] ['bookmark_id'] = $new_bm_id;
-						$this->request->data ['BookmarkExtData'] ['kind'] = BookmarkExtData::EXT_TITLE;
-						$this->BookmarkExtData->save ( $this->request->data ['BookmarkExtData'] );
+
+                        //set title
+                        if(isset($this->request->data ['BookmarkExtData']['title'])){
+                            $title = $this->request->data ['BookmarkExtData']['title'];
+                                $this->BookmarkExtData->create();
+                                $this->BookmarkExtData->save(array(
+                                    'bookmark_id' => $new_bm_id,
+                                    'kind' => BookmarkExtData::EXT_TITLE,
+                                    'ext_data' => $title
+                                ));
+                        }
+
+                        /* Upload image */
+                        if(isset($this->request->data['BookmarkExtData']['title_header_image']['tmp_name'])) {
+                            if (is_uploaded_file($this->request->data['BookmarkExtData']['title_header_image']['tmp_name'])) {
+                                $ImageModel = new Image();
+                                $ImageModel->target_folder = 'bookmark';
+                                $this->request->data['BookmarkExtData']['title_header_image'] = $ImageModel->saveImage('tiles', $this->request->data['BookmarkExtData']['title_header_image']);
+                            } else {
+                                if (empty($this->request->data['BookmarkExtData']['image_header_deleted']) && isset($bookmarkExtData['title_header_image'])) {
+                                    $this->request->data['BookmarkExtData']['title_header_image'] = $bookmarkExtData['title_header_image'];
+                                } else {
+                                    $this->request->data['BookmarkExtData']['title_header_image'] = "";
+                                }
+                            }
+                            $this->BookmarkExtData->create();
+                            $this->BookmarkExtData->save(array(
+                                'bookmark_id' => $new_bm_id,
+                                'kind' => BookmarkExtData::EXT_TITLE_HEADER_IMAGE,
+                                'ext_data' => $this->request->data ['BookmarkExtData']['title_header_image']
+                            ));
+                        }
 					}
                     /* Add new record to links table */
                     if (isset($this->request->data['Link'])) {
@@ -570,6 +599,27 @@ class BookmarksController extends AppController
             $this->Session->setFlash(__('数値以外のIDです'), 'alert-box', array('class' => 'alert-danger'));
             $this->redirect(array('action' => 'index'));
         }
+
+
+        // get data from table BookmarkExtData
+        $bookmarkExtDataDto = $this->BookmarkExtData->find ( "all", array (
+            'fields' => array (
+                'ext_data', 'kind'
+            ),
+            'conditions' => array (
+                'bookmark_id' => "{$id}",
+            )
+        ) );
+        $bookmarkExtData = null;
+        foreach($bookmarkExtDataDto as $key => $value){
+            if($value['BookmarkExtData']['kind'] == 'title'){
+                $bookmarkExtData['title'] = $value['BookmarkExtData']['ext_data'];
+            }
+            if($value['BookmarkExtData']['kind'] == 'title_header_image'){
+                $bookmarkExtData['title_header_image'] = $value['BookmarkExtData']['ext_data'];
+            }
+        }
+
         /* Get link type */
         $linkType0 = $this->Link->find('first', array(
             'conditions' => array(
@@ -657,6 +707,7 @@ class BookmarksController extends AppController
             'sp_type' => $sp_type,
             'linkType' => $linkType
         ));
+
 
         $bookmark = $this->Bookmark->findById($id);
         if (!$bookmark) {
@@ -837,10 +888,50 @@ class BookmarksController extends AppController
 
 			// Update bookmark ext data
 			if (isset ( $this->request->data ['BookmarkExtData'] )) {
+                if(isset($this->request->data ['BookmarkExtData']['title'])){
+                    $title = $this->request->data ['BookmarkExtData']['title'];
+                    if(isset($bookmarkExtData['title'])){
+                        $this->BookmarkExtData->updateAll(array('ext_data' => "'$title'"), array('bookmark_id' => $id, 'BookmarkExtData.kind' => BookmarkExtData::EXT_TITLE));
+                    } else{
+                        $this->BookmarkExtData->create();
+                        $this->BookmarkExtData->save(array(
+                            'bookmark_id' => $id,
+                            'kind' => BookmarkExtData::EXT_TITLE,
+                            'ext_data' => "'$title'"
+                        ));
+                    }
+                }
+                /* Upload image */
+                if(isset($this->request->data['BookmarkExtData']['title_header_image']['tmp_name'])) {
+                    if (is_uploaded_file($this->request->data['BookmarkExtData']['title_header_image']['tmp_name'])) {
+                        $ImageModel = new Image();
+                        $ImageModel->target_folder = 'bookmark';
+                        $this->request->data['BookmarkExtData']['title_header_image'] = $ImageModel->saveImage('tiles', $this->request->data['BookmarkExtData']['title_header_image']);
+                    } else {
+                        if (empty($this->request->data['BookmarkExtData']['image_header_deleted']) && isset($bookmarkExtData['title_header_image'])) {
+                            $this->request->data['BookmarkExtData']['title_header_image'] = $bookmarkExtData['title_header_image'];
+                        } else {
+                            $this->request->data['BookmarkExtData']['title_header_image'] = "";
+                        }
+                    }
+                    if(isset($bookmarkExtData['title_header_image'])){
+                        $title_header_image = str_replace('\\', '\\\\', $this->request->data ['BookmarkExtData']['title_header_image']);
+                        $this->BookmarkExtData->updateAll(array('ext_data' => "'$title_header_image'"), array('bookmark_id' => $id, 'BookmarkExtData.kind' => BookmarkExtData::EXT_TITLE_HEADER_IMAGE));
+                    } else{
+                        $this->BookmarkExtData->create();
+                        $this->BookmarkExtData->save(array(
+                            'bookmark_id' => $id,
+                            'kind' => BookmarkExtData::EXT_TITLE_HEADER_IMAGE,
+                            'ext_data' => $this->request->data ['BookmarkExtData']['title_header_image']
+                        ));
+                    }
+                }
 
-				$this->request->data ['BookmarkExtData'] ['bookmark_id'] = $id;
-				$this->request->data ['BookmarkExtData'] ['kind'] = BookmarkExtData::EXT_TITLE;
-				$this->BookmarkExtData->save ( $this->request->data ['BookmarkExtData'] );
+
+//                if(isset($this->request->data ['BookmarkExtData']['title_header_image'])){
+//                    $title_header_image = $this->request->data ['BookmarkExtData']['title_header_image'];
+//                    $this->BookmarkExtData->updateAll(array('ext_data' => "'title_header_image'"), array('bookmark_id' => $id, 'BookmarkExtData.kind' => BookmarkExtData::EXT_TITLE_HEADER_IMAGE));
+//                }
 			}
             if (isset($this->request->data['Bookmark'])) {
 
@@ -904,21 +995,13 @@ class BookmarksController extends AppController
            
         }
 
-		$bookmarkExtData = $this->BookmarkExtData->find ( "first", array (
-				'fields' => array (
-						'ext_data'
-				),
-				'conditions' => array (
-						'bookmark_id' => "{$id}"
-				)
-		) );
 
         if (!$this->request->data) {
             $this->request->data = $bookmark;
         }
-        if(isset($bookmarkExtData ['BookmarkExtData'])){
-		    $this->set ( 'bookmarkExtData', $bookmarkExtData ['BookmarkExtData'] );
-        }
+
+        $this->set ('bookmarkExtData', $bookmarkExtData);
+
         $this->set('bookmark', $bookmark);
     }
 
