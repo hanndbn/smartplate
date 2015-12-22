@@ -24,7 +24,6 @@ class TagsController extends AppController
         $this->loadModel('AccessLog');
         $this->loadModel('Management');
         $this->loadModel('Team');
-        $this->loadModel ( 'BookmarkExtData' );
         $this->Auth->deny();
     }
 
@@ -681,15 +680,6 @@ class TagsController extends AppController
                 $ids[] = $lb_data_id;
             }
 
-            // save BookmarkExtData
-            if (isset ( $this->request->data ['BookmarkExtData'] )) {
-
-                $this->request->data ['BookmarkExtData'] ['bookmark_id'] = $bookmarkID;
-                $this->request->data ['BookmarkExtData'] ['kind'] = BookmarkExtData::EXT_TITLE;
-                $this->BookmarkExtData->save ( $this->request->data ['BookmarkExtData'] );
-            }
-
-
             // Save plate record
             if (isset($this->request->data['Tag'])) {
                 $rq_data = $this->request->data['Tag'];
@@ -742,18 +732,6 @@ class TagsController extends AppController
             } else {
                 $this->Session->setFlash(__('プレートをアップデートすることはできません。'), 'alert-box', array('class' => 'alert-danger'));
             }
-        }
-
-        $bookmarkExtData = $this->BookmarkExtData->find ( "first", array (
-            'fields' => array (
-                'ext_data'
-            ),
-            'conditions' => array (
-                'bookmark_id' => $bookmarkID
-            )
-        ) );
-        if(isset($bookmarkExtData ['BookmarkExtData'])){
-            $this->set ( 'bookmarkExtData', $bookmarkExtData ['BookmarkExtData'] );
         }
 
         if (!$this->request->data) {
