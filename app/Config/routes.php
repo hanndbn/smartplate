@@ -113,6 +113,8 @@ Router::connect('/api/bookmark/content_detail', array('controller' => 'contentde
 Router::connect('/api/bookmark/put', array('controller' => 'contentputapi', 'action' => 'index'));
 Router::connect('/api/bookmark/update', array('controller' => 'contentupdateapi', 'action' => 'index'));
 Router::connect('/api/bookmark/save', array('controller' => 'contentsaveapi', 'action' => 'index'));
+
+Router::connect('/api/bookmark/tiles_title_image', array('controller' => 'TilesTitleImage', 'action' => 'index'));
 // Label
 Router::connect('/api/label/add', array('controller' => 'labeladdapi', 'action' => 'index'));
 Router::connect('/api/label/get', array('controller' => 'labelgetapi', 'action' => 'index'));
@@ -123,6 +125,9 @@ Router::connect('/api/custom/action', array('controller' => 'customdataapi', 'ac
 
 //for dynapick
 Router::connect('/api/bookmark/put_by_dynapick', array('controller' => 'putbydynapickapi', 'action' => 'index'));
+
+//total device
+Router::connect('/api/analytics/device_count', array('controller' => 'devicecount', 'action' => 'index'));
 
 // redirector
 Router::connect('/s', array('controller' => 'redirect', 'action' => 'index'));

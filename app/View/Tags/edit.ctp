@@ -34,7 +34,7 @@
                             <div class="detail-image-content col-sm-8">
                                 <?php
                                 echo $this->Form->input('Tag.icon', array('type' => 'file', 'id' => "TagImageUpload", 'div' => false, 'label' => false, 'class' => 'm-b-sm'));
-                                echo (!empty($tag['Tag']['icon'])) ? '<img  class="img-thumbnail" src="/upload/plate/' . $tag['Tag']['icon'] . '"/>' : '<img class="avatar"/>';
+                                echo (!empty($tag['Tag']['icon'])) ? '<img  class="avatar img-thumbnail" src="/upload/plate/' . $tag['Tag']['icon'] . '"/>' : '<img class="avatar"/>';
                                 ?>
                                 <!--<input id="BookmarkImage" type="file" required="required" onchange="imageURL(this)" name="data[Bookmark][image]">-->
                             </div>

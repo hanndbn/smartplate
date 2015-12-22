@@ -49,6 +49,7 @@ $team_id = ($this->request->prefix == 'system') ? '' : $session['team_id'];
                     <option value="8"><?php echo __('を割当てる'); ?></option>
                 <?php } ?>
                 <option value="6"><?php echo __('を無効・有効にする'); ?></option>
+                <option value="9"><?php echo __('change image'); ?></option>
             </select>
 
                     <span id="changeName" style="display:none;" class="">　
@@ -254,6 +255,7 @@ $team_id = ($this->request->prefix == 'system') ? '' : $session['team_id'];
 echo $this->Html->link('Detail', array(), array('class' => 'invisible', 'id' => 'detailModal', 'data-toggle' => 'ajaxModal'));
 echo $this->Html->link('label_edit', array(), array('class' => 'invisible', 'id' => 'quicklabelModal', 'data-toggle' => 'ajaxModal', 'data-href' => $this->Html->url(array('controller' => 'tags', 'action' => 'quickedit_label'))));
 echo $this->Html->link('link_bm_edit', array(), array('class' => 'invisible', 'id' => 'link_bm_Modal', 'data-toggle' => 'ajaxModal', 'data-href' => $this->Html->url(array('controller' => 'tags', 'action' => 'quickedit_link_bm'))));
+echo $this->Html->link('img_edit', array(), array('class' => 'invisible', 'id' => 'img_Modal', 'data-toggle' => 'ajaxModal', 'data-href' => $this->Html->url(array('controller' => 'changeimages', 'action' => 'quickedit_img'))));
 ?>
 <script type="text/javascript">
 function ajaxEdit(url, data) {
@@ -396,16 +398,25 @@ $(document).ready(function () {
                 if ($("#ajaxSubModal").length) $('#ajaxSubModal').remove();
                 ids = getIDs(checked);
                 var href = $('#link_bm_Modal').attr('data-href');
-                $('#link_bm_Modal').attr('href', href + '?id=' + ids).trigger('click');
+                if($('#masterbox').prop("checked")) {
+                    $hrefredirect = href + '?selectall=1';
+                }else{
+                    $hrefredirect = href + '?id=' + ids;
+                }
+                $('#link_bm_Modal').attr('href', $hrefredirect).trigger('click');
                 $('#selection').val('');
                 break;
             case '4':
                 resetFilter();
                 ids = getIDs(checked);
                 var href = $('#quicklabelModal').attr('data-href');
-                $('#quicklabelModal').attr('href', href + '?id=' + ids).trigger('click');
-                $('#selection').val('');
-
+                if($('#masterbox').prop("checked")) {
+                    $hrefredirect = href + '?selectall=1';
+                }else{
+                    $hrefredirect = href + '?id=' + ids;
+                }
+                $('#quicklabelModal').attr('href', $hrefredirect).trigger('click');
+                $('#selection').val('');img_Modal
                 break;
             case '5':
                 resetFilter();
@@ -426,6 +437,21 @@ $(document).ready(function () {
                 $('#changePB').show();
                 $('#quickAction-btn').show();
                 break;
+            case '9':
+                resetFilter();
+                ids = getIDs(checked);
+                var href = $('#img_Modal').attr('data-href');
+                var hrefredirect;
+                if($('#masterbox').prop("checked")) {
+                    hrefredirect = href + '?selectall=1';
+                }else{
+                    hrefredirect = href + '?id=' + ids;
+                }
+                hrefredirect = hrefredirect + '&strtable=Tag';
+
+                $('#img_Modal').attr('href', hrefredirect).trigger('click');
+                $('#selection').val('');
+                break;
             default :
                 resetFilter(true);
                 break;
@@ -442,6 +468,10 @@ $(document).ready(function () {
         var input = '';
         var data = [];
         var value = $("#selection").val();
+        var selectall = '0';
+        if($('#masterbox').prop("checked")) {
+            selectall = '1';
+        }
         switch (value) {
             case '2':
                 input = $("#newName").val();
@@ -460,8 +490,10 @@ $(document).ready(function () {
                     text: '<?php echo __("「選択した項目の名前を変更します」") ?>',
                     title: '<?php echo __("確認") ?>',
                     confirm: function (confirmButton) {
+
                         ids = getIDs(checked);
-                        data = {id: ids, type: filter_val, input: input};
+
+                        data = {id: ids, type: filter_val, input: input, selectall:selectall};
                         ajaxEdit(url, data);
                     },
                     confirmButton: "Yes",
@@ -476,7 +508,7 @@ $(document).ready(function () {
                 break;
             case '6':
                 ids = getIDs(checked);
-                data = {ids: ids, type: filter_val};
+                data = {ids: ids, type: filter_val, selectall:selectall};
                 ajaxEdit(url, data);
                 break;
             case '7':
@@ -513,7 +545,7 @@ $(document).ready(function () {
                 system = 0;
             <?php } ?>
                 ids = getIDs(checked);
-                data = {ids: ids, type: filter_val, system: system, input: input};
+                data = {ids: ids, type: filter_val, system: system, input: input, selectall:selectall};
                 ajaxEdit(url, data);
                 break;
             default:

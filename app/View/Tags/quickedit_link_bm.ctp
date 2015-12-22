@@ -91,6 +91,7 @@
                             }
                             ?>
                             </tbody>
+                            <?php echo $this->Form->input('selectall', array('div' => false, 'type' => 'hidden', 'label' => FALSE, 'value' => $selectall, 'id' => 'selectall')); ?>
                             <?php echo $this->Form->input('Tag.bm_id', array('div' => false, 'id' => 'hiddenID', 'type' => 'hidden', 'label' => FALSE)); ?>
                             <?php echo $this->Form->input('Tag.target_id', array('div' => false, 'id' => 'targetID', 'type' => 'hidden', 'label' => FALSE, 'value' => $tag_ids)); ?>
                         </table>

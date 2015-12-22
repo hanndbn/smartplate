@@ -12,7 +12,7 @@ class BookmarkExtData extends AppModel
     const EXT_TITLE    = 'title';
     const EXT_HEADER   = 'header';
     const EXT_FOOTER   = 'footer';
-    const EXT_TITLE_HEADER_IMAGE   = 'title_header_image';
+    const EXT_TITLE_HEADER_IMAGE   = 'title_header_img';
 
     public $useTable = 'bookmark_ext_data';
     public $belongsTo = array(

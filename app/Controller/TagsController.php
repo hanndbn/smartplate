@@ -153,6 +153,7 @@ class TagsController extends AppController
             $joins = array();
             $need_clear_fileter = true;
             foreach ($this->params['named'] as $param_name => $value) {
+
                 $value = Utility_Str::returnhtml($value);
                 // Don't apply the default named parameters used for pagination
                 if (!in_array($param_name, array('page', 'sort', 'direction', 'limit', 'act'))) {
@@ -238,23 +239,21 @@ class TagsController extends AppController
             }
         }
 
-        if($flgFilter){
-            $this->paginate = array(
-                'limit' => 20,
-                'order' => array('id' => 'asc'),
-                'joins' => $joins,
-                'conditions' => $conditions,
-                'group' => 'Tag.id'
-            );
-        } else {
-            $this->paginate = array(
-                'limit' => '20',
-                'order' => array('id' => 'asc'),
-                'joins' => $joins,
-                'conditions' => $conditions,
-                'group' => 'Tag.id'
-            );
-        }
+        $tagsSession = $this->Tag->find('all', array(
+            'order' => array('id' => 'asc'),
+            'joins' => $joins,
+            'conditions' => $conditions,
+            'group' => 'Tag.id'
+        ));
+
+        $this->paginate = array(
+            'limit' => '20',
+            'order' => array('id' => 'asc'),
+            'joins' => $joins,
+            'conditions' => $conditions,
+            'group' => 'Tag.id'
+        );
+
         /* end filter */
         if (isset($this->params['named']['act']) && $this->params['named']['act'] == 'export') {
             $tagsExport = $this->Tag->find('all', array(
@@ -265,6 +264,7 @@ class TagsController extends AppController
             ));
             $this->export($tagsExport);
         }
+
         $tags = $this->paginate('Tag');
         if (count($tags) > 0) {
             $query_date = date('Y-m-d H:i:s');
@@ -422,6 +422,7 @@ class TagsController extends AppController
             'adminUser' => $adminUser,
             'listProject' => $listProject
         ));
+        $this->Session->write("Tag", $tagsSession);
     }
 
     public function export($tags)
@@ -911,18 +912,26 @@ class TagsController extends AppController
             $rq_data = $this->request->data;
             $type = $rq_data['type'];
             $input = (isset($rq_data['input'])) ? $rq_data['input'] : '';
-            if ($type == 2) {
+            $selectall = $rq_data['selectall'];
+            $ids = array();
+            if(isset($selectall) && $selectall == '1') {
+                $tagData = $this->Session->read("tag");
+                if (isset($tagData)) {
+                    foreach ($this->Session->read("tag") as $key => $value) {
+                        array_push($ids, $value['Tag']['id']);
+                    }
+                }
+            } else{
                 $ids = $rq_data['id'];
+            }
+            if ($type == 2) {
                 $now = date('Y-m-d H:i:s');
                 $this->Tag->updateAll(array('name' => "'$input'", 'cdate' => "'$now'"), array('id' => $ids));
             } elseif ($type == 3) {
-                $id = $rq_data['id'];
-                $this->Tag->save(array('id' => $id, 'kind' => $input));
+                $this->Tag->save(array('id' => $ids, 'kind' => $input));
             } elseif ($type == 5) {
-                $id = $rq_data['id'];
-                $this->Tag->save(array('id' => $id, 'code' => $input));
+                $this->Tag->save(array('id' => $ids, 'code' => $input));
             } elseif ($type == 6) {
-                $ids = $rq_data['ids'];
                 foreach ($ids as $v_id) {
                     $available = $this->Tag->find('first', array(
                         'conditions' => array('id' => $v_id),
@@ -936,7 +945,6 @@ class TagsController extends AppController
                     $this->Tag->save(array('id' => $v_id, 'available' => $status));
                 }
             } elseif ($type == 8) {
-                $ids = $rq_data['ids'];
                 $system = $rq_data['system'];
                 $authority = $this->Auth->user('authority');
                 foreach ($ids as $v_id) {
@@ -984,21 +992,36 @@ class TagsController extends AppController
     public function quickedit_label()
     {
         $this->_setModalLayout();
-        if (isset($_REQUEST['id'])) {
-            $target_id = $_REQUEST['id'];
+        if (isset($_REQUEST['id']) || isset($_REQUEST['selectall'])) {
+            $target_id = isset($_REQUEST['id']) ? $_REQUEST['id'] : '';
+            $selectall = isset($_REQUEST['selectall']) ? $_REQUEST['selectall'] : '0';
             //Get List Label Hierachi
             $labels = $this->Label->getLabelsArray('TagModel');
             $listLabelHierachy = $this->Label->makeNestedLabels($this->Label->getLabelHierarchy($labels));
 
             $this->set(array(
                 'labels' => $listLabelHierachy,
-                'target_id' => $target_id
+                'target_id' => $target_id,
+                'selectall' => $selectall
             ));
             return $this->render('quickedit_label', 'ajax');
         }
         if (isset($this->request->data['Tag'])) {
             $rq_label = $this->request->data['Tag'];
             $label_ids = explode(',', $rq_label['label_id']);
+            $target_ids = array();
+            $selectall = $this->request->data['Tag']['selectall'];
+            if($selectall == '1') {
+                $tagData = $this->Session->read("tag");
+                if (isset($tagData)) {
+                    foreach ($this->Session->read("tag") as $key => $value) {
+                        array_push($target_ids, $value['Tag']['id']);
+                    }
+                }
+            } else {
+                $target_ids = explode(',', $this->request->data['Tag']['target_id']);
+            }
+
             $target_ids = explode(',', $rq_label['target_id']);
             $old_label = $this->Label->label_id_Query($target_ids, 'TagModel');
             // Delete old records
@@ -1031,10 +1054,12 @@ class TagsController extends AppController
     public function quickedit_link_bm()
     {
         $this->_setModalLayout();
-        if (isset($_REQUEST['id'])) {
+        if (isset($_REQUEST['id']) || isset($_REQUEST['selectall'])) {
             $this->loadModel('Bookmark');
             $this->loadModel('Master');
-            $tag_ids = $_REQUEST['id'];
+
+            $tag_ids = isset($_REQUEST['id']) ? $_REQUEST['id'] : '';
+            $selectall = isset($_REQUEST['selectall']) ? $_REQUEST['selectall'] : '0';
             // List all bookmark content
             $teamID = $this->getTeamid($this->Auth->user('authority'));
             $condition = array();
@@ -1082,14 +1107,26 @@ class TagsController extends AppController
                 'tag_ids' => $tag_ids,
                 'list_bms' => $list_bms,
                 'list_lb' => $labels,
-                'type' => $type
+                'type' => $type,
+                'selectall' => $selectall
             ));
 
             return $this->render('quickedit_link_bm', 'ajax');
         }
 
         if (isset($this->request->data['Tag'])) {
-            $ids = explode(',', $this->request->data['Tag']['target_id']);
+            $ids = array();
+            $selectall = $this->request->data['Tag']['selectall'];
+            if($selectall == '1') {
+                $tagData = $this->Session->read("tag");
+                if (isset($tagData)) {
+                    foreach ($this->Session->read("tag") as $key => $value) {
+                        array_push($ids, $value['Tag']['id']);
+                    }
+                }
+            } else {
+                $ids = explode(',', $this->request->data['Tag']['target_id']);
+            }
             $rq_bm = $this->request->data['Tag']['bm_id'];
             $now = date('Y-m-d H:i:s');
             // Update tag table
