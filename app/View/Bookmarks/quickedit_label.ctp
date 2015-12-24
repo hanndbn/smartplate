@@ -26,6 +26,7 @@
                     </div>
                 </div>
                 <?php
+                echo $this->Form->input('selectall', array('div' => false, 'type' => 'hidden', 'label' => FALSE, 'value' => $selectall, 'id' => 'selectall'));
                 echo $this->Form->input('label_id', array('div' => false, 'id' => 'hiddenID', 'type' => 'hidden', 'label' => FALSE));
                 echo $this->Form->input('target_id', array('div' => false, 'type' => 'hidden', 'label' => FALSE, 'value' => $target_id));
                 ?>

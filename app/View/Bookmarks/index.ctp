@@ -344,6 +344,7 @@ $(document).ready(function () {
             alert('<?php echo __('少なくとも１つの項目を選択してください') ?>');
             return;
         }
+        var $hrefredirect = '';
 
         switch (value) {
             case '0':
@@ -372,7 +373,12 @@ $(document).ready(function () {
                 resetFilter();
                 ids = getIDs(checked);
                 var href = $('#quicklabelModal').attr('data-href');
-                $('#quicklabelModal').attr('href', href + '?id=' + ids).trigger('click');
+                if($('#all').prop("checked")) {
+                    $hrefredirect = href + '?selectall=1';
+                }else{
+                    $hrefredirect = href + '?id=' + ids;
+                }
+                $('#quicklabelModal').attr('href', $hrefredirect).trigger('click');
                 $('#selection').val('');
                 break;
             case '5':
@@ -410,6 +416,10 @@ $(document).ready(function () {
         var input = '';
         var data = [];
         var value = $("#selection").val();
+        var selectall = '0';
+        if($('#all').prop("checked")) {
+            selectall = '1';
+        }
         switch (value) {
             case '2':
                 input = $("#newName").val();
@@ -429,7 +439,7 @@ $(document).ready(function () {
                     title: '<?php echo __("確認") ?>',
                     confirm: function (confirmButton) {
                         ids = getIDs(checked);
-                        data = {ids: ids, type: filter_val, input: input};
+                        data = {ids: ids, type: filter_val, input: input, selectall:selectall};
                         ajaxEdit(url, data);
                     },
                     confirmButton: "Yes",
@@ -441,7 +451,7 @@ $(document).ready(function () {
             case '3':
                 input = $('#myType option:selected').attr('value');
                 ids = getIDs(checked);
-                data = {ids: ids, type: filter_val, input: input};
+                data = {ids: ids, type: filter_val, input: input, selectall:selectall};
                 ajaxEdit(url, data);
                 break;
             case '4':
@@ -452,13 +462,13 @@ $(document).ready(function () {
                     alert('<?php echo __('このフィールドを入力してください。') ?>');
                 } else {
                     ids = getIDs(checked);
-                    data = {ids: ids, type: filter_val, input: input};
+                    data = {ids: ids, type: filter_val, input: input, selectall:selectall};
                     ajaxEdit(url, data);
                 }
                 break;
             case '6':
                 ids = getIDs(checked);
-                data = {ids: ids, type: filter_val};
+                data = {ids: ids, type: filter_val, selectall:selectall};
                 ajaxEdit(url, data);
                 break;
             case '7':
@@ -467,8 +477,9 @@ $(document).ready(function () {
                     text: '<?php echo __("選択した項目を削除してもよろしいですか？") ?>',
                     title: '<?php echo __("確認") ?>',
                     confirm: function (confirmButton) {
+                        debugger;
                         ids = getIDs(checked);
-                        var datas = {id: ids};
+                        var datas = {id: ids, selectall:selectall};
                         $.ajax({
                             type: 'POST',
                             dataType: 'JSON',

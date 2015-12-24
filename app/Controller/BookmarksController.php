@@ -262,6 +262,14 @@ class BookmarksController extends AppController
         }
         $this->set('bookmarks', $bookmark);
         $this->render('index');
+
+        // save to seesion
+        $bookmarkSession = $this->Bookmark->find('all', array(
+            'order' => array('id' => 'asc'),
+            'joins' => $joins,
+            'conditions' => $conditions
+        ));
+        $this->Session->write("Bookmark", $bookmarkSession);
     }
 
     public function export($bookmarks)
@@ -1088,6 +1096,7 @@ class BookmarksController extends AppController
             throw new MethodNotAllowedException();
         }
         $this->loadModel('Tag');
+        $this->loadModel('BookmarkExtData');
         $rq_data = $this->request->data;
         $ids = $rq_data['id'];
         foreach ($ids as $key => $value) {
@@ -1106,6 +1115,7 @@ class BookmarksController extends AppController
         }
         $this->Tag->updateAll(array('bookmark_id' => 0), array('bookmark_id' => $ids));
         $this->Link->deleteAll(array('bookmark_id' => $ids), false);
+        $this->BookmarkExtData->deleteAll(array('bookmark_id' => $ids), false);
         if ($this->Bookmark->delete($ids)) {
             $this->Session->setFlash(__('コンテンツが削除されました。'), 'alert-box', array('class' => 'alert-success'));
         } else {
@@ -1129,9 +1139,20 @@ class BookmarksController extends AppController
         if ($this->request->is('post')) {
             $rq_data = $this->request->data;
             $type = $rq_data['type'];
-            $ids = $rq_data['ids'];
             $input = isset($rq_data['input']) ? $rq_data['input'] : '';
             $now = date('Y-m-d H:i:s');
+            $ids = array();
+            $selectall = $rq_data['selectall'];
+            if(isset($selectall) && $selectall == '1') {
+                $bookmarkData = $this->Session->read("Bookmark");
+                if (isset($bookmarkData)) {
+                    foreach ($bookmarkData as $key => $value) {
+                        array_push($ids, $value['Bookmark']['id']);
+                    }
+                }
+            } else{
+                $ids = $rq_data['ids'];
+            }
             if ($type == 2) {
                 $this->Bookmark->updateAll(array('name' => "'$input'", 'cdate' => "'$now'"), array('id' => $ids));
             } elseif ($type == 3) {
@@ -1153,7 +1174,7 @@ class BookmarksController extends AppController
                 }
             }
 
-            $this->Session->setFlash(__('コンテンツのアップデートに成功しました。'), 'alert-box', array('class' => 'alert-success'));
+             $this->Session->setFlash(__('コンテンツのアップデートに成功しました。'), 'alert-box', array('class' => 'alert-success'));
 
             echo json_encode(1);
             exit;
@@ -1171,23 +1192,38 @@ class BookmarksController extends AppController
     public function quickedit_label()
     {
         $this->_setModalLayout();
-        if (isset($_REQUEST['id'])) {
-            $target_id = $_REQUEST['id'];
+        if (isset($_REQUEST['id']) || isset($_REQUEST['selectall'])) {
+            $target_id = isset($_REQUEST['id']) ? $_REQUEST['id'] : '';
+            $selectall = isset($_REQUEST['selectall']) ? $_REQUEST['selectall'] : '0';
             //Get List Label Hierachi
             $labels = $this->Label->getLabelsArray('BookmarkModel');
             $listLabelHierachy = $this->Label->makeNestedLabels($this->Label->getLabelHierarchy($labels));
 
             $this->set(array(
                 'labels' => $listLabelHierachy,
-                'target_id' => $target_id
+                'target_id' => $target_id,
+                'selectall' => $selectall
             ));
             return $this->render('quickedit_label', 'ajax');
         }
         if (isset($this->request->data['Bookmark'])) {
             $rq_label = $this->request->data['Bookmark'];
             $label_ids = explode(',', $rq_label['label_id']);
-            $target_ids = explode(',', $rq_label['target_id']);
+            $target_ids = array();
             $old_label = $this->Label->label_id_Query($target_ids, 'BookmarkModel');
+
+            $selectall = $rq_label['selectall'];
+            if($selectall == '1') {
+                $bookmarkData = $this->Session->read("Bookmark");
+                if (isset($bookmarkData)) {
+                    foreach ($this->Session->read("Bookmark") as $key => $value) {
+                        array_push($target_ids, $value['Bookmark']['id']);
+                    }
+                }
+            } else {
+                $target_ids = explode(',', $rq_label['target_id']);
+            }
+
             // Delete old records
             $this->Label->LabelData->deleteAll(array('target_id' => $target_ids, 'label_id' => $old_label), false);
 

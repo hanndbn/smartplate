@@ -375,6 +375,7 @@ $(document).ready(function () {
             alert('<?php echo __('少なくとも１つの項目を選択してください') ?>');
             return;
         }
+        var $hrefredirect = '';
 
         switch (value) {
             case '0':

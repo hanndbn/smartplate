@@ -293,6 +293,8 @@ $(document).ready(function () {
             return;
         }
 
+        var $hrefredirect = '';
+
         switch (parseInt(value)) {
             case 0:
                 resetFilter();
@@ -333,8 +335,13 @@ $(document).ready(function () {
                 checked.each(function () {
                     id.push($(this).val());
                 });
+                if($('#all').prop("checked")) {
+                    $hrefredirect = href + '?selectall=1';
+                }else{
+                    $hrefredirect = href + '?id=' + id;
+                }
 
-                $label.attr('href', href + '?id=' + id).trigger('click');
+                $label.attr('href', $hrefredirect).trigger('click');
                 $('#selection').val('');
                 break;
 
@@ -380,7 +387,8 @@ $(document).ready(function () {
         var selection = parseInt($('#selection').val()),
             $check = $('.check'),
             ajaxData = {
-                id: []
+                id: [],
+                selectall:'0'
             },
             url;
 
@@ -390,6 +398,9 @@ $(document).ready(function () {
                     ajaxData.id.push($(this).val());
                 }
             });
+            if($('#all').prop("checked")) {
+                ajaxData.selectall = '1';
+            }
 
             switch (selection) {
                 case 2:
@@ -409,7 +420,6 @@ $(document).ready(function () {
                         title: '<?php echo __("確認") ?>',
                         confirm: function (confirmButton) {
                             ajaxData.name = $('#newName').val();
-
                             $.ajax({
                                 type: 'POST',
                                 dataType: 'JSON',

@@ -238,13 +238,6 @@ class TagsController extends AppController
             }
         }
 
-        $tagsSession = $this->Tag->find('all', array(
-            'order' => array('id' => 'asc'),
-            'joins' => $joins,
-            'conditions' => $conditions,
-            'group' => 'Tag.id'
-        ));
-
         $this->paginate = array(
             'limit' => '20',
             'order' => array('id' => 'asc'),
@@ -252,6 +245,13 @@ class TagsController extends AppController
             'conditions' => $conditions,
             'group' => 'Tag.id'
         );
+
+        $tagsSession = $this->Tag->find('all', array(
+            'order' => array('id' => 'asc'),
+            'joins' => $joins,
+            'conditions' => $conditions,
+            'group' => 'Tag.id'
+        ));
 
         /* end filter */
         if (isset($this->params['named']['act']) && $this->params['named']['act'] == 'export') {
@@ -421,6 +421,7 @@ class TagsController extends AppController
             'adminUser' => $adminUser,
             'listProject' => $listProject
         ));
+
         $this->Session->write("Tag", $tagsSession);
     }
 
@@ -1000,7 +1001,6 @@ class TagsController extends AppController
                 $target_ids = explode(',', $this->request->data['Tag']['target_id']);
             }
 
-            $target_ids = explode(',', $rq_label['target_id']);
             $old_label = $this->Label->label_id_Query($target_ids, 'TagModel');
             // Delete old records
             $this->Label->LabelData->deleteAll(array('target_id' => $target_ids, 'label_id' => $old_label), false);

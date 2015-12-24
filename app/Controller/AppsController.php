@@ -273,6 +273,12 @@ class AppsController extends AppController {
             'count' => $count,
             'total' => $total
         ));
+        $accountSession = $this->User->find('all', array(
+            'order' => array('id' => 'asc'),
+            'joins' => $joins,
+            'conditions' => $conditions
+        ));
+        $this->Session->write("account", $accountSession);
     }
 
     /**
@@ -512,15 +518,17 @@ class AppsController extends AppController {
      */
     public function ajaxLabel() {
         $this->_setModalLayout();
-        if (isset($_REQUEST['id'])) {
+        if (isset($_REQUEST['id']) || isset($_REQUEST['selectall'])) {
             $target_id = $_REQUEST['id'];
+            $selectall = isset($_REQUEST['selectall']) ? $_REQUEST['selectall'] : '0';
             //Get List Label Hierachi
             $labels = $this->Label->getLabelsArray('UserModel');
             $listLabelHierachy = $this->Label->makeNestedLabels($this->Label->getLabelHierarchy($labels));
 
             $this->set(array(
                 'labels' => $listLabelHierachy,
-                'target_id' => $target_id
+                'target_id' => $target_id,
+                'selectall' => $selectall
             ));
             return $this->render('ajax_label', 'ajax');
         }
@@ -529,8 +537,22 @@ class AppsController extends AppController {
             if (isset($this->request->data['User'])) {
                 $rq_label = $this->request->data['User'];
                 $label_ids = explode(',', $rq_label['label_id']);
-                $target_ids = explode(',', $rq_label['target_id']);
+
+                $target_ids = array();
+                $selectall = $this->request->data['User']['selectall'];
+                if($selectall == '1') {
+                    $accountData = $this->Session->read("tag");
+                    if (isset($accountData)) {
+                        foreach ($this->Session->read("account") as $key => $value) {
+                            array_push($target_ids, $value['User']['id']);
+                        }
+                    }
+                } else {
+                    $target_ids = explode(',', $rq_label['target_id']);
+                }
+
                 $old_label = $this->Label->label_id_Query($target_ids, 'UserModel');
+
                 // Delete old records
                 $this->Label->LabelData->deleteAll(array('target_id' => $target_ids, 'label_id' => $old_label), false);
 
@@ -557,11 +579,23 @@ class AppsController extends AppController {
 
         if ($this->request->is('ajax')) {
             $input = $this->request->data;
+            $ids = array();
+            $selectall = $input['selectall'];
+            if(isset($selectall) && $selectall == '1') {
+                $accountData = $this->Session->read("account");
+                if (isset($accountData)) {
+                    foreach ($accountData as $key => $value) {
+                        array_push($ids, $value['User']['id']);
+                    }
+                }
+            } else{
+                $ids = $input['id'];
+            }
 
-            if (!empty($input['id']) && !empty($input['name'])) {
+            if (!empty($ids) && !empty($input['name'])) {
                 $now = date('Y-m-d H:i:s');
                 $name = $input['name'];
-                $this->User->updateAll(array('name' => "'$name'", 'cdate' => "'$now'"), array('id' => $input['id']));
+                $this->User->updateAll(array('name' => "'$name'", 'cdate' => "'$now'"), array('id' => $ids));
 
                 $this->Session->setFlash(__('アカウントを保存しました。'), 'alert-box', array('class' => 'alert-success'));
 
@@ -584,10 +618,22 @@ class AppsController extends AppController {
 
         if ($this->request->is('ajax')) {
             $input = $this->request->data;
+            $ids = array();
+            $selectall = $input['selectall'];
+            if(isset($selectall) && $selectall == '1') {
+                $accountData = $this->Session->read("account");
+                if (isset($accountData)) {
+                    foreach ($accountData as $key => $value) {
+                        array_push($ids, $value['User']['id']);
+                    }
+                }
+            } else{
+                $ids = $input['id'];
+            }
 
-            if (!empty($input['id'])) {
+            if (!empty($ids)) {
                 $users = $this->User->find('all', array(
-                    'conditions' => array('User.id' => $input['id'])
+                    'conditions' => array('User.id' => $ids)
                 ));
 
                 $users = $this->User->removeArrayWrapper('User', $users, 'id');
@@ -618,8 +664,21 @@ class AppsController extends AppController {
         if ($this->request->is('ajax')) {
             $input = $this->request->data;
 
-            if (!empty($input['id'])) {
-                foreach ($input['id'] as $key => $value) {
+            $ids = array();
+            $selectall = $input['selectall'];
+            if(isset($selectall) && $selectall == '1') {
+                $accountData = $this->Session->read("account");
+                if (isset($accountData)) {
+                    foreach ($accountData as $key => $value) {
+                        array_push($ids, $value['User']['id']);
+                    }
+                }
+            } else{
+                $ids = $input['id'];
+            }
+
+            if (!empty($ids)) {
+                foreach ($ids as $key => $value) {
                     $lb_id = $this->Label->LabelData->find('all', array(
                         'conditions' => array(
                             'Label.type' => 'UserModel',
@@ -632,7 +691,7 @@ class AppsController extends AppController {
                         $this->Label->LabelData->deleteAll(array('target_id' => $value, 'label_id' => $label), false);
                     }                   
                 }
-                $this->User->deleteAll(array('User.id' => $input['id']), false);
+                $this->User->deleteAll(array('User.id' => $ids), false);
 
                 $this->Session->setFlash(__('アカウントが削除されました。'), 'alert-box', array('class' => 'alert-success'));
 
