@@ -54,13 +54,13 @@ $name = $role ? 'for ' . $role : '';
         <?php
         $ua = $_SERVER["HTTP_USER_AGENT"];
         echo $this->Html->meta('icon');
-        echo $this->Html->css(array('bootstrap.min', 'non-responsive', 'datepicker', 'style', 'custom'));
+        echo $this->Html->css(array('bootstrap.min', 'non-responsive', 'datepicker', 'style', 'custom','bootstrap-timepicker.min'));
         if (preg_match('~MSIE|Internet Explorer~i', $ua) || (strpos($ua, 'Trident/7.0; rv:11.0') !== false)) {
             echo $this->Html->css('ie');
         }
         if (strpos($ua, 'Safari'))
             echo $this->Html->css('safari');
-        echo $this->Html->script(array('jquery.min', 'jquery-ui.min', 'bootstrap.min', 'jquery.confirm.min', 'zingchart.min', 'main'));
+        echo $this->Html->script(array('jquery.min', 'jquery-ui.min', 'bootstrap.min', 'jquery.confirm.min', 'zingchart.min', 'main','bootstrap-timepicker.min'));
 
         echo $this->fetch('meta');
         echo $this->fetch('css');

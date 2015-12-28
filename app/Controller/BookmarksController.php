@@ -131,6 +131,13 @@ class BookmarksController extends AppController
             'list_lb' => $labels,
             'type' => $type
         ));
+
+        // flag filter NFC QR follow date
+        $flgFilterFollowDate = false;
+        $flgFilter = false;
+        $dateFrom = null;
+        $dateTo = null;
+
         // Filter
         $conditions = array();
         //Transform POST into GET
@@ -139,13 +146,22 @@ class BookmarksController extends AppController
             $filter_url['action'] = $this->request->params['action'];
             // We need to overwrite the page every time we change the parameters
             $filter_url['page'] = 1;
+
+            if(empty($this->data['Filter']['from']) || empty($this->data['Filter']['to'])){
+                $flgFilterFollowDate = false;
+            } else {
+                $flgFilterFollowDate = true;
+            }
+
             // for each filter we will add a GET parameter for the generated url
             if (isset($this->data['Filter'])) {
                 foreach ($this->data['Filter'] as $name => $value) {
                     if ($value != trim('')) {
-                        // You might want to sanitize the $value here
-                        // or even do a urlencode to be sure
-                        $filter_url[$name] = Utility_Str::escapehtml($value);
+                        if(($flgFilterFollowDate && ($name == "from" || $name == "to")) || (!($name == "from") && !($name == "to"))) {
+                            // You might want to sanitize the $value here
+                            // or even do a urlencode to be sure
+                            $filter_url[$name] = Utility_Str::escapehtml($value);
+                        }
                     }
                 }
             }
@@ -163,10 +179,20 @@ class BookmarksController extends AppController
                 if (!in_array($param_name, array('page', 'sort', 'direction', 'limit', 'act'))) {
                     // You may use a switch here to make special filters
                     // like "between dates", "greater than", etc
-                    if ($param_name == "name") {
+                    if($param_name == 'from'){
+                        $dateFrom = date('Y-m-d', strtotime($value));
+                    } elseif($param_name == 'to'){
+                        $dateTo = date('Y-m-d', strtotime($value));
+                    } elseif ($param_name == "name") {
                         $conditions += array(
                             array('Bookmark.name LIKE' => '%' . str_replace('%', '\%', $value) . '%')
                         );
+                    }  elseif($param_name = "filter"){
+                        if($value == 'filter'){
+                            $flgFilter = true;
+                        }
+                        else if($value == 'filterFollowDate')
+                            $flgFilterFollowDate = true;
                     } elseif ($param_name == "kind") {
                         $conditions += array('Bookmark.kind' => $value);
                     } else {
@@ -213,7 +239,7 @@ class BookmarksController extends AppController
                 'joins' => $joins,
                 'conditions' => $conditions
             ));
-            $this->export($bookmarksExport);
+            $this->export($bookmarksExport, $flgFilterFollowDate, $dateFrom, $dateTo);
         }
         $bookmark = $this->paginate('Bookmark');
         if (count($bookmark) > 0) {
@@ -249,14 +275,26 @@ class BookmarksController extends AppController
                     'conditions' => array('Tag.bookmark_id' => "{$id}"),
                     ));
                 $bm_id['Link'] = $link;
-                /* Get number access_log */
-                $a_type = $this->AccessLog->find('count', array(
-                    'conditions' => array(
-                        'AccessLog.bookmark_id' => "{$id}",
-                        'AccessLog.created_at BETWEEN ? AND ?' => array($fday, $lday)
-                    ),
-                    'fields' => array('AccessLog.p_type')
-                ));
+                $a_type = array();
+                if($flgFilterFollowDate){
+                    /* Get number access_log */
+                    $a_type = $this->AccessLog->find('count', array(
+                        'conditions' => array(
+                            'AccessLog.bookmark_id' => "{$id}",
+                            'AccessLog.created_at BETWEEN ? AND ?' => array($dateFrom, $dateTo)
+                        ),
+                        'fields' => array('AccessLog.p_type')
+                    ));
+                } else {
+                    /* Get number access_log */
+                    $a_type = $this->AccessLog->find('count', array(
+                        'conditions' => array(
+                            'AccessLog.bookmark_id' => "{$id}",
+                            'AccessLog.created_at BETWEEN ? AND ?' => array($fday, $lday)
+                        ),
+                        'fields' => array('AccessLog.p_type')
+                    ));
+                }
                 $bm_id['Access'] = $a_type;
             };
         }
@@ -272,7 +310,7 @@ class BookmarksController extends AppController
         $this->Session->write("Bookmark", $bookmarkSession);
     }
 
-    public function export($bookmarks)
+    public function export($bookmarks, $flgFilterFollowDate, $dateFrom, $dateTo)
     {
 
         $this->response->download("contents.csv");
@@ -308,14 +346,27 @@ class BookmarksController extends AppController
                 ));
 
                 $bm_id['Bookmark']['Link'] = $link;
-                /* Get number access_log */
-                $a_type = $this->AccessLog->find('count', array(
-                    'conditions' => array(
-                        'AccessLog.bookmark_id' => "{$id}",
-                        'AccessLog.created_at BETWEEN ? AND ?' => array($fday, $lday)
-                    ),
-                    'fields' => array('AccessLog.p_type')
-                ));
+
+                $a_type = array();
+                if($flgFilterFollowDate){
+                    /* Get number access_log */
+                    $a_type = $this->AccessLog->find('count', array(
+                        'conditions' => array(
+                            'AccessLog.bookmark_id' => "{$id}",
+                            'AccessLog.created_at BETWEEN ? AND ?' => array($dateFrom, $dateTo)
+                        ),
+                        'fields' => array('AccessLog.p_type')
+                    ));
+                }else {
+                    /* Get number access_log */
+                    $a_type = $this->AccessLog->find('count', array(
+                        'conditions' => array(
+                            'AccessLog.bookmark_id' => "{$id}",
+                            'AccessLog.created_at BETWEEN ? AND ?' => array($fday, $lday)
+                        ),
+                        'fields' => array('AccessLog.p_type')
+                    ));
+                }
                 $bm_id['Bookmark']['Access'] = $a_type;
             };
         }

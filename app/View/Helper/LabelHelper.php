@@ -114,7 +114,7 @@ class LabelHelper extends AppHelper
         {
             $template = '<span class="caret" id="caret_'.$ids.'"></span>';
             $template .= $this->_renderEditDropdownLabels($labels, $ids, $class);
-            $template .= '<div class="delete_label" data-id="0" data-value="'.$ids.'" title="delete"><img src="img/delete.png" height="20px"/></div>';
+            $template .= '<div class="delete_label" data-id="0" data-value="'.$ids.'" title="delete"><img src="/img/delete.png" height="20px"/></div>';
             $input = '<input id="InputLabel_' .$ids. '" type="hidden" name="data[_label]['.$ids.']" value="'.$ids.'">';
             $template .= $input;
             return $template;

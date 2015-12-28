@@ -136,7 +136,7 @@ $last_login = $this->requestAction(array('controller' => 'managements', 'action'
                 // Add a basic search
                 echo $this->Form->input("name", array('label' => false, 'placeholder' => "検索キー"));
 
-                echo $this->Form->submit(__('検索'), array('class' => 'imgBtn wide hightlight-btn m-sm'));
+                echo $this->Form->submit(__('検索'), array('class' => 'imgBtn wide hightlight-btn m-sm', 'id' => 'searchId'));
 
                 echo $this->Html->link(__('リセット'), $base_url, array('class' => 'imgBtn wide subFilter'));
                 ?>
@@ -151,6 +151,24 @@ $last_login = $this->requestAction(array('controller' => 'managements', 'action'
                    class='icon-label' title="csv download" onclick="alert('<?php echo __('ダウンロードされるファイルのフォーマットはUTF8です。') ?>');">
                     <i class="fa-2x fa fa-download"></i>
                 </a>
+                <div style="display:inline-block; float:right">
+                    <?php
+                    if(isset($this->request->data['Filter']['from'])) {
+                        echo $this->Form->input("from", array('label' => false, 'type' => 'text', 'style' => 'width: 100px; height: 25px;', 'id' => 'from', 'value' => $this->request->data['Filter']['from']));
+                    } else {
+                        echo $this->Form->input("from", array('label' => false, 'type' => 'text', 'style' => 'width: 100px; height: 25px;', 'id' => 'from'));
+                    }
+                    ?>
+                    <?php
+                    if(isset($this->request->data['Filter']['to'])) {
+                        echo $this->Form->input("to", array('label' => false, 'type' => 'text', 'style' => 'width: 100px; height: 25px;', 'id' => 'to', 'value' => $this->request->data['Filter']['to']));
+                    } else {
+                        echo $this->Form->input("to", array('label' => false, 'type' => 'text', 'style' => 'width: 100px; height: 25px;', 'id' => 'to'));
+                    }
+                    ?>
+                    <?php  echo $this->Form->submit(__('確認'), array('style' => 'margin-right: 0px;', 'class' => 'imgBtn wide hightlight-btn m-sm', 'id' => 'datePickerBtn')); ?>
+                    <div class="submit"><input style="width: 80px;margin-right: 0px;" class="imgBtn wide hightlight-btn m-sm" id="clearBtn" value="クリア"></div>
+                </div>
                 <?php
                 echo $this->Form->end();
                 ?>
@@ -167,8 +185,6 @@ $last_login = $this->requestAction(array('controller' => 'managements', 'action'
             <th class="typeB highlight"><?php echo __('ラベル')/* $this->Paginator->sort('label', __('ラベル')); */ ?></th>
             <th class="typeB"><?php echo $this->Paginator->sort('name', __('名前')); ?></th>
             <th class="typeB"><?php echo $this->Paginator->sort('code', __('バーコード')); ?></th>
-            <th class="typeB"><?php echo $this->Paginator->sort('start_date', __('開始日')); ?></th>
-            <th class="typeB"><?php echo $this->Paginator->sort('end_date', __('終了日')); ?></th>
             <th class="typeB"><?php echo $this->Paginator->sort('cdate', __('更新日時')); ?></th>
             <th class="typeB"><?php echo $this->Paginator->sort('link', __('配信プレート数')); ?></th>
             <th class="typeB highlight"><?php echo __('当月アクセス数')/* $this->Paginator->sort('access', __('当月アクセス数')); */ ?></th>
@@ -206,8 +222,6 @@ $last_login = $this->requestAction(array('controller' => 'managements', 'action'
                     data-name="<?php echo Utility_Str::escapehtml($bookmark['Bookmark']['name']) ?>"><?php echo Utility_Str::wordTrim(Utility_Str::escapehtml($bookmark['Bookmark']['name']), 50); ?></td>
                 <td class="bm_code"
                     data-name="<?php echo Utility_Str::escapehtml($bookmark['Bookmark']['code']) ?>"><?php echo Utility_Str::wordTrim(Utility_Str::escapehtml($bookmark['Bookmark']['code']), 50); ?></td>
-                <td><?php echo date('Y/m/d', strtotime($bookmark['Bookmark']['start_date'])); ?></td>
-                <td><?php echo date('Y/m/d', strtotime($bookmark['Bookmark']['end_date'])); ?></td>
                 <td><?php echo date('Y/m/d H:i:s', strtotime($bookmark['Bookmark']['cdate'])); ?></td>
                 <td><?php echo $bookmark['Link']; ?></td>
                 <td><?php echo $bookmark['Access']; ?></td>
@@ -514,5 +528,48 @@ $(document).ready(function () {
             $detail.attr('href', href).trigger('click');
         }
     })
+
+    // process date picker filter NFC
+    $("#from").datepicker({
+        defaultDate: "+1w",
+        inline: true,
+        numberOfMonths: 1,
+        dateFormat: 'yy-mm-dd',
+        maxDate: 0,
+        onClose: function(selectedDate) {
+            $("#to").datepicker("option", "minDate", selectedDate);
+        }
+    });
+    $("#to").datepicker({
+        defaultDate: "+1w",
+        inline: true,
+        numberOfMonths: 1,
+        dateFormat: 'yy-mm-dd',
+        maxDate: 0,
+        onClose: function(selectedDate) {
+            $("#from").datepicker("option", "maxDate", selectedDate);
+        }
+    });
+    $('#datePickerBtn').click(function() {
+        var fromVal = $('#from').val(),
+            toVal = $('#to').val();
+        if (fromVal == '' || toVal == '') {
+            alert('<?php echo __('Input date should not be empty.') ?>');
+            return false;
+        } else {
+            var input = $("<input>").attr("type", "hidden").attr("name", "data[Filter][filter]").val("filterFollowDate");
+            $("#FilterIndexForm").append($(input));
+        }
+    });
+
+    $('#searchId').click(function() {
+        var input = $("<input>").attr("type", "hidden").attr("name", "data[Filter][filter]").val("filter");
+        $("#FilterIndexForm").append($(input));
+    });
+
+    $('#clearBtn').click(function() {
+        $('#from').val('');
+        $('#to').val('');
+    });
 });
 </script>

@@ -987,5 +987,11 @@ a.blackBtn{
 
 }
 
+@font-face {
+	font-family: 'Glyphicons Halflings';
+	src: url('fonts-timepicker/glyphicons-halflings-regular.ttf');
+	url('fonts-timepicker/glyphicons-halflings-regular.woff') format('woff');
+}
+
 
 
