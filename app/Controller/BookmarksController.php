@@ -579,17 +579,20 @@ class BookmarksController extends AppController
                                     }
                                     if (isset($link[$redirectType])) {
                                         foreach ($link[$redirectType] as $key => $val) {
-                                            if (empty($val['url'])) continue;
-                                            $this->Link->save(
-                                                array(
-                                                    'bookmark_id' => $new_bm_id,
-                                                    'tag_id' => 0,
-                                                    'type' => $type,
-                                                    'sub_type' => $key,
-                                                    'url' => $val['url'],
-                                                    'user_id' => $this->Auth->user('id'),
-                                                    'cdate' => "$udate"
-                                                ));
+                                            if (!empty($val['url']) || (!empty($val['start_date']) && !empty($val['end_date']))) {
+                                                $this->Link->save(
+                                                    array(
+                                                        'bookmark_id' => $new_bm_id,
+                                                        'tag_id' => 0,
+                                                        'type' => $type,
+                                                        'sub_type' => $key,
+                                                        'url' => $val['url'],
+                                                        'user_id' => $this->Auth->user('id'),
+                                                        'cdate' => "$udate",
+                                                        'start_date' => $val['start_date'],
+                                                        'end_date' => $val['end_date']
+                                                    ));
+                                            }
                                         }
                                     }
                                     break;
@@ -717,7 +720,7 @@ class BookmarksController extends AppController
                 'bookmark_id' => $id,
                 'type' => Bookmark::TYPE_ROTATE
             ),
-            'fields' => array('url', 'type', 'sub_type')
+            'fields' => array('url', 'type', 'sub_type', 'start_date', 'end_date')
         ));
         //List Label
         $list_lb = $this->Label->getLabelsArray('BookmarkModel');
@@ -847,17 +850,20 @@ class BookmarksController extends AppController
                             }
                             if (isset($link[$redirectType])) {
                                 foreach ($link[$redirectType] as $key => $val) {
-                                    if (empty($val['url'])) continue;
-                                    $this->Link->save(
-                                        array(
-                                            'bookmark_id' => $id,
-                                            'tag_id' => 0,
-                                            'type' => $type,
-                                            'sub_type' => $key,
-                                            'url' => $val['url'],
-                                            'user_id' => $this->Auth->user('id'),
-                                            'cdate' => "$udate"
-                                        ));
+                                    if (!empty($val['url']) || (!empty($val['start_date']) && !empty($val['end_date']))) {
+                                        $this->Link->save(
+                                            array(
+                                                'bookmark_id' => $id,
+                                                'tag_id' => 0,
+                                                'type' => $type,
+                                                'sub_type' => $key,
+                                                'url' => $val['url'],
+                                                'user_id' => $this->Auth->user('id'),
+                                                'cdate' => "$udate",
+                                                'start_date' => $val['start_date'],
+                                                'end_date' => $val['end_date']
+                                            ));
+                                    }
                                 }
                             }
                             break;

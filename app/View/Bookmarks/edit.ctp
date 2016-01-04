@@ -284,9 +284,7 @@ for ($i = 1; $i <= 8; $i++) {
                                                             <span><?php echo __('Start') ?>:</span>
                                                         </div>
                                                         <div class="detail-code-content col-sm-9">
-                                                            <?php if(isset($bookmark['Link']['start_date'])) echo $this->Form->input('Link.start_date', array('div' => false, 'type' => 'text', 'label' => FALSE, 'class' => 'start_date', 'value' => h(date('Y/m/d', strtotime($bookmark['Link']['start_date'])))));
-                                                            else echo $this->Form->input('Link.start_date', array('div' => false, 'type' => 'text', 'label' => FALSE, 'class' => 'start_date'));
-                                                            ?>
+                                                            <?php echo $this->Form->input("Link" . $i . "start_date", array('div' => false, 'label' => false, 'name' => "data[Link][rotate][" . $i . "][start_date]", 'type' => 'text', 'value' => isset($linkType4[$i - 1]['Link']['start_date']) ? $linkType4[$i - 1]['Link']['start_date'] : '', 'class' => 'start_date'));?>
                                                         </div>
                                                     </div>
                                                     <div class="form-group">
@@ -294,9 +292,7 @@ for ($i = 1; $i <= 8; $i++) {
                                                             <span><?php echo __('End') ?>:</span>
                                                         </div>
                                                         <div class="detail-code-content col-sm-9">
-                                                            <?php if(isset($bookmark['Bookmark']['end_date'])) echo $this->Form->input('Bookmark.end_date', array('div' => false, 'type' => 'text', 'label' => FALSE, 'class' => 'end_date', 'value' => h(date('Y/m/d', strtotime($bookmark['Link']['end_date'])))));
-                                                            else echo $this->Form->input('Link.end_date', array('div' => false, 'type' => 'text', 'label' => FALSE, 'class' => 'end_date'));
-                                                            ?>
+                                                            <?php echo $this->Form->input("Link" . $i . "end_date", array('div' => false, 'label' => false, 'name' => "data[Link][rotate][" . $i . "][end_date]", 'type' => 'text', 'value' => isset($linkType4[$i - 1]['Link']['end_date']) ? $linkType4[$i - 1]['Link']['end_date'] : '', 'class' => 'end_date'));?>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -364,7 +360,7 @@ for ($i = 1; $i <= 8; $i++) {
                     </div>
                 </div>
                 <div class="modal-footer m-t-md">
-                    <button type="submit" class="btn btn-default">
+                    <button type="submit" class="btn btn-default" id="btnSubmit">
                         <?php echo __('OK')
                         ?>
                     </button>
@@ -647,16 +643,54 @@ var baseUrl = '<?php echo $this->webroot ?>';
 
 // process datepicker
         $(".start_date").timepicker({
-            showSeconds:  true,  // 秒まで
+            showSeconds:  false,  // 秒まで
             disableFocus: true,
             defaultTime: '',
-            showMeridian: false
+            showMeridian: false,
+            disableMousewheel: false
         });
         $(".end_date").timepicker({
-            showSeconds:  true,  // 秒まで
+            showSeconds:  false,  // 秒まで
             disableFocus: true,
             defaultTime: '',
-            showMeridian: false
+            showMeridian: false,
+            disableMousewheel: false
+        });
+        $("#btnSubmit").click(function(e){
+            e.preventDefault();
+            var doSubmit = true;
+            for(var i=1;i <=8; i++){
+                var isValid = true;
+                var startDateSelector = $("#BookmarkLink" + i + "startDate");
+                var endDateSelector = $("#BookmarkLink" + i + "endDate");
+                if(startDateSelector.val() != '' && endDateSelector != '') {
+                    var startTimeInt = parseInt(startDateSelector.val().replace(":", ""));
+                    var endTimeInt = parseInt(endDateSelector.val().replace(":",""));
+                    if(startTimeInt >= endTimeInt){
+                        isValid = false;
+                    }
+                }else if((startDateSelector.val() == '' && endDateSelector.val() != '') || (startDateSelector.val() != '' && endDateSelector.val() == '')){
+                    isValid = false;
+                }
+
+                if(!isValid){
+                    doSubmit = false;
+                    var errorSelector = $("#error" + i);
+                    if(errorSelector.size() == 0) {
+                        $(startDateSelector).before('<span id="error' + i + '" style="color: red">Invalid!</span>');
+                    }
+                    $(startDateSelector).css("border","1px solid red");
+                    $(endDateSelector).css("border","1px solid red");
+                } else {
+                    $("#error" + i).remove();
+                    $(startDateSelector).css("border","");
+                    $(endDateSelector).css("border","");
+                }
+            }
+            if(doSubmit) {
+                $("#BookmarkEditForm").submit();
+                $("#BookmarkAddForm").submit();
+            }
         });
 });
 </script>
