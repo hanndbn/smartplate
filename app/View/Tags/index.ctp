@@ -168,7 +168,6 @@ $team_id = ($this->request->prefix == 'system') ? '' : $session['team_id'];
                         }
                     ?>
                     <?php  echo $this->Form->submit(__('確認'), array('style' => 'margin-right: 0px;', 'class' => 'imgBtn wide hightlight-btn m-sm', 'id' => 'datePickerBtn')); ?>
-                    <div class="submit"><input style="width: 80px;margin-right: 0px;" class="imgBtn wide hightlight-btn m-sm" id="clearBtn" value="クリア"></div>
                 </div>
                 <?php echo $this->Form->end(); ?>
 
@@ -609,11 +608,6 @@ $(document).ready(function () {
     $('#searchId').click(function() {
         var input = $("<input>").attr("type", "hidden").attr("name", "data[Filter][filter]").val("filter");
         $("#FilterIndexForm").append($(input));
-    });
-
-    $('#clearBtn').click(function() {
-        $('#from').val('');
-        $('#to').val('');
     });
 });
 </script>

@@ -659,25 +659,38 @@ var baseUrl = '<?php echo $this->webroot ?>';
         $("#btnSubmit").click(function(e){
             e.preventDefault();
             var doSubmit = true;
+            var timeArray = [];
             for(var i=1;i <=8; i++){
                 var isValid = true;
+                var error = '';
                 var startDateSelector = $("#BookmarkLink" + i + "startDate");
                 var endDateSelector = $("#BookmarkLink" + i + "endDate");
-                if(startDateSelector.val() != '' && endDateSelector != '') {
+                if(startDateSelector.val() != '' && endDateSelector.val() != '') {
                     var startTimeInt = parseInt(startDateSelector.val().replace(":", ""));
                     var endTimeInt = parseInt(endDateSelector.val().replace(":",""));
+                    var timestr = startTimeInt.toString().concat(endTimeInt.toString());
                     if(startTimeInt >= endTimeInt){
                         isValid = false;
+                        error = 'Invalid!';
+                    }
+                    if(jQuery.inArray(timestr, timeArray) == -1){
+                        timeArray.push(timestr);
+                    } else {
+                        isValid = false;
+                        error = 'Duplicate!';
                     }
                 }else if((startDateSelector.val() == '' && endDateSelector.val() != '') || (startDateSelector.val() != '' && endDateSelector.val() == '')){
                     isValid = false;
+                    error = 'Invalid!';
                 }
 
                 if(!isValid){
                     doSubmit = false;
                     var errorSelector = $("#error" + i);
                     if(errorSelector.size() == 0) {
-                        $(startDateSelector).before('<span id="error' + i + '" style="color: red">Invalid!</span>');
+                        $(startDateSelector).before('<span id="error' + i + '" style="color: red">' + error + '</span>');
+                    } else {
+                        $("#error" + i).html(error);
                     }
                     $(startDateSelector).css("border","1px solid red");
                     $(endDateSelector).css("border","1px solid red");
