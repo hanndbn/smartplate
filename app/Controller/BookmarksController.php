@@ -674,10 +674,10 @@ class BookmarksController extends AppController
         ) );
         $bookmarkExtData = null;
         foreach($bookmarkExtDataDto as $key => $value){
-            if($value['BookmarkExtData']['kind'] == 'title'){
+            if($value['BookmarkExtData']['kind'] == BookmarkExtData::EXT_TITLE){
                 $bookmarkExtData['title'] = $value['BookmarkExtData']['ext_data'];
             }
-            if($value['BookmarkExtData']['kind'] == 'title_header_image'){
+            if($value['BookmarkExtData']['kind'] == BookmarkExtData::EXT_TITLE_HEADER_IMAGE){
                 $bookmarkExtData['title_header_image'] = $value['BookmarkExtData']['ext_data'];
             }
         }
@@ -962,7 +962,7 @@ class BookmarksController extends AppController
                         $this->BookmarkExtData->save(array(
                             'bookmark_id' => $id,
                             'kind' => BookmarkExtData::EXT_TITLE,
-                            'ext_data' => "'$title'"
+                            'ext_data' => $title
                         ));
                     }
                 }
