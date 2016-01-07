@@ -140,20 +140,23 @@ echo ($action == 'edit') ? __('コンテンツ修正') : __('コンテンツ新�
                                     <span><?php echo __('画像')
                                         ?>:</span>
                                 </div>
-                                <div class="detail-image-content col-sm-8">
+                                <?php
+                                for ($i = 1; $i <= 13; $i++)
+                                    {
+                                ?>
+                                <div class="detail-image-content col-sm-8 imageChoose" style="display: none" id = <?php echo "imageChoose_$i" ?>>
+                                    <?php echo $this->Form->input("BookmarkExtData.image.$i", array('type' => 'file', 'id' => "BookmarkImageUpload_$i", 'div' => false, 'label' => false, 'class' => 'm-b-sm BookmarkImageUpload'));?>
+                                    <div class= <?php echo "image_contenner_$i" ?>>
                                     <?php
-                                    echo $this->Form->input('Bookmark.image', array('type' => 'file', 'id' => "BookmarkImageUpload", 'div' => false, 'label' => false, 'class' => 'm-b-sm'));
-                                    ?>
-                                    <div class="image_contenner">
-                                        <?php
-if ($action == 'edit') {
-echo ($bookmark['Bookmark']['image']) ? '<img  class="avatar edit img-thumbnail" src="' . Bookmark::imageURL($bookmark['Bookmark']['image']) . '"/><img id="image_delete" src="/img/delete.png" height="20px"/>' : '<img class="avatar"/>';
-} else {
-echo ' <img src="" class="avatar"/>';
-}
+                                        if ($action == 'edit') {
+                                            echo (!empty($bookmarkExtData['image'][$i]) ? "<img  class='avatar_$i edit img-thumbnail' src='" . Bookmark::imageURL($bookmarkExtData['image'][$i]) . "'/><img class='image_delete' id = 'imagedelete_$i' src='/img/delete.png' height='20px'/>" : " <img src='' class='avatar_$i'/>");
+                                        } else {
+                                            echo " <img src='' class='avatar_$i'/>";
+                                        }
                                         ?>
                                     </div>
                                 </div>
+                                <?php } ?>
                             </div>
                         </div>
                     </div>
@@ -448,8 +451,11 @@ $('.link-content img').attr('src', '').addClass('default');
 //            $('#LinkClear').val(1);
 });
 
-$('#image_delete').click(function (e) {
-$('.image_contenner').empty().html('<img class="avatar"/><input type="hidden" name="data[Bookmark][image_deleted]" value=1 />');
+$('.image_delete').click(function (e) {
+    if(this.id.split("_")[1] != null) {
+        var kindId = this.id.split("_")[1];
+        $('.image_contenner_' + kindId).empty().html('<img class="avatar_' + kindId + '"/><input type="hidden" name="data[BookmarkExtData][image_deleted][' + kindId + ']" value=1 />');
+    }
 });
 $('#image_header_delete').click(function (e) {
     $('.image_header_contenner').empty().html('<img class="avatarHeader"/><input type="hidden" name="data[BookmarkExtData][image_header_deleted]" value=1 />');
@@ -488,7 +494,7 @@ $('#LabelClearLabel').val(1);
 $(this).hide();
 });
 
-$('#BookmarkImageUpload').on('change', function () {
+$('.BookmarkImageUpload').on('change', function () {
 imageURL(this);
 });
 
@@ -505,38 +511,41 @@ e.preventDefault();
 });
 
 function imageURL(input) {
-var url = input.value,
-ext = url.substring(url.lastIndexOf('.') + 1).toLowerCase(),
-_validFileExtensions = ["jpg", "jpeg", "bmp", "gif", "png"];
+    if(input.id.split("_")[1] != null){
+        var kindId = input.id.split("_")[1];
+        var url = input.value,
+            ext = url.substring(url.lastIndexOf('.') + 1).toLowerCase(),
+            _validFileExtensions = ["jpg", "jpeg", "bmp", "gif", "png"];
 
-canUpload = true;
+        canUpload = true;
 
-if ($('#BookmarkImageUploadError').length) {
-$('#BookmarkImageUploadError').empty().remove();
-}
+        if ($('#BookmarkImageUploadError'+ kindId).length) {
+            $('#BookmarkImageUploadError'+ kindId).empty().remove();
+        }
 
-if ($.inArray(ext, _validFileExtensions) == -1) {
-error = '<span id="BookmarkImageUploadError" style="color: red;">* The selected file is not valid.</span>';
+        if ($.inArray(ext, _validFileExtensions) == -1) {
+            error = '<span id="BookmarkImageUploadError' + kindId + '" style="color: red;">* The selected file is not valid.</span>';
 
-$('.detail-image-content').append(error);
+            $('.detail-image-content').append(error);
 
-canUpload = false;
+            canUpload = false;
 
-return;
-}
+            return;
+        }
 
-if (input.files && input.files[0]) {
-var reader = new FileReader();
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
 
-reader.onload = function (e) {
-$('.avatar')
-.attr('src', e.target.result)
-.width('200')
-.height('100');
-};
+            reader.onload = function (e) {
+                $('.avatar_' + kindId)
+                    .attr('src', e.target.result)
+                    .width('120')
+                    .height('92');
+            };
 
-reader.readAsDataURL(input.files[0]);
-}
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
 }
 
 function imageHeaderURL(input) {
@@ -704,6 +713,17 @@ var baseUrl = '<?php echo $this->webroot ?>';
                 $("#BookmarkEditForm").submit();
                 $("#BookmarkAddForm").submit();
             }
+        });
+
+
+        var kindChecked = $("#BookmarkKind :checked").val();
+        var imageDivSelector = "#imageChoose_" + kindChecked;
+        $(imageDivSelector).css("display", "");
+        $("#BookmarkKind").change(function(){
+            $(".imageChoose").css("display", "none");
+            var kindChecked = $("#BookmarkKind :checked").val();
+            var imageDivSelector = "#imageChoose_" + kindChecked;
+            $(imageDivSelector).css("display", "");
         });
 });
 </script>

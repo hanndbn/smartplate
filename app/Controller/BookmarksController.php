@@ -460,14 +460,14 @@ class BookmarksController extends AppController
             }
             if (isset($this->request->data['Bookmark'])) {
                 $rq_data = $this->request->data['Bookmark'];
-                // Upload image
+/*                // Upload image
                 if (is_uploaded_file($rq_data['image']['tmp_name'])) {
                     $ImageModel = new Image();
                     $ImageModel->target_folder = 'bookmark';
                     $rq_data['image'] = $ImageModel->saveImage($this->Auth->user('team_id'), $rq_data['image']);
                 } else {
                     $rq_data['image'] = '';
-                }
+                }*/
                 $rq_data['team_id'] = $this->Auth->user('team_id');
                 $rq_data['cdate'] = date('Y-m-d H:i:s');
                 if ($this->Bookmark->save($rq_data)) {
@@ -507,6 +507,32 @@ class BookmarksController extends AppController
                                 'kind' => BookmarkExtData::EXT_TITLE_HEADER_IMAGE,
                                 'ext_data' => $this->request->data ['BookmarkExtData']['title_header_image']
                             ));
+                        }
+
+                        /* Upload image follow kind bookmark */
+                        if(isset($this->request->data['BookmarkExtData']['image'])) {
+                            foreach($this->request->data['BookmarkExtData']['image'] as $key => $val) {
+                                $imagePath = '';
+                                if (!empty($val['tmp_name'])) {
+                                    if (is_uploaded_file($val['tmp_name'])) {
+                                        $ImageModel = new Image();
+                                        $ImageModel->target_folder = 'bookmark';
+                                        $imagePath = $ImageModel->saveImage($this->Auth->user('team_id'), $val);
+                                    } else {
+                                        if (empty($val) && isset($bookmarkExtData[$key + 1])) {
+                                            $imagePath = $bookmarkExtData[$key + 1];
+                                        } else {
+                                            $imagePath = "";
+                                        }
+                                    }
+                                    $this->BookmarkExtData->create();
+                                    $this->BookmarkExtData->save(array(
+                                        'bookmark_id' => $new_bm_id,
+                                        'kind' => $key,
+                                        'ext_data' => $imagePath
+                                    ));
+                                }
+                            }
                         }
 					}
                     /* Add new record to links table */
@@ -673,12 +699,16 @@ class BookmarksController extends AppController
             )
         ) );
         $bookmarkExtData = null;
+        $bookmarkExtData['image'] = array();
         foreach($bookmarkExtDataDto as $key => $value){
             if($value['BookmarkExtData']['kind'] == BookmarkExtData::EXT_TITLE){
                 $bookmarkExtData['title'] = $value['BookmarkExtData']['ext_data'];
             }
-            if($value['BookmarkExtData']['kind'] == BookmarkExtData::EXT_TITLE_HEADER_IMAGE){
+            else if($value['BookmarkExtData']['kind'] == BookmarkExtData::EXT_TITLE_HEADER_IMAGE){
                 $bookmarkExtData['title_header_image'] = $value['BookmarkExtData']['ext_data'];
+            } else {
+                $kind = $value['BookmarkExtData']['kind'];
+                $bookmarkExtData['image'] += array($value['BookmarkExtData']['kind'] => $value['BookmarkExtData']['ext_data']);
             }
         }
 
@@ -992,6 +1022,40 @@ class BookmarksController extends AppController
                     }
                 }
 
+                /* Upload image follow kind bookmark */
+                if(isset($this->request->data['BookmarkExtData']['image'])) {
+                    foreach($this->request->data['BookmarkExtData']['image'] as $key => $val) {
+                        $imagePath = '';
+                        if (!empty($val['tmp_name']) || !empty($this->request->data['BookmarkExtData']['image_deleted'][$key])) {
+                            if (empty($val['tmp_name']) && !empty($this->request->data['BookmarkExtData']['image_deleted'][$key])) {
+                                $imagePath = "";
+                            } else if(is_uploaded_file($val['tmp_name'])){
+                                $ImageModel = new Image();
+                                $ImageModel->target_folder = 'bookmark';
+                                $imagePath = $ImageModel->saveImage($this->Auth->user('team_id'), $val);
+                            }else {
+                                if (isset($bookmarkExtData['image'][$key])) {
+                                    $imagePath = $bookmarkExtData['image'][$key];
+                                } else {
+                                    $imagePath = "";
+                                }
+                            }
+                            if (isset($bookmarkExtData['image'][$key])) {
+                                $title_image = str_replace('\\', '\\\\', $imagePath);
+                                $this->BookmarkExtData->updateAll(array('ext_data' => "'$title_image'"), array('bookmark_id' => $id, 'BookmarkExtData.kind' => $key));
+                            } else {
+                                $this->BookmarkExtData->create();
+                                $this->BookmarkExtData->save(array(
+                                    'bookmark_id' => $id,
+                                    'kind' => $key,
+                                    'ext_data' => $imagePath
+                                ));
+                            }
+                        }
+                    }
+                }
+
+
 
 //                if(isset($this->request->data ['BookmarkExtData']['title_header_image'])){
 //                    $title_header_image = $this->request->data ['BookmarkExtData']['title_header_image'];
@@ -1001,7 +1065,7 @@ class BookmarksController extends AppController
             if (isset($this->request->data['Bookmark'])) {
 
                 /* Upload image */
-                if (is_uploaded_file($this->request->data['Bookmark']['image']['tmp_name'])) {
+/*                if (is_uploaded_file($this->request->data['Bookmark']['image']['tmp_name'])) {
                     $ImageModel = new Image();
                     $ImageModel->target_folder = 'bookmark';
                     $this->request->data['Bookmark']['image'] = $ImageModel->saveImage($this->Auth->user('team_id'), $this->request->data['Bookmark']['image']);
@@ -1011,7 +1075,7 @@ class BookmarksController extends AppController
                     }else{
                         $this->request->data['Bookmark']['image'] = "";
                     }
-                }
+                }*/
 
                 // Check duplicate label_datas
                 $check_label_datas = $this->Label->LabelData->find('all', array(
