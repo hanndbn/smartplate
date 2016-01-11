@@ -83,7 +83,19 @@ $authority = $session['authority'];
                         </tr>
                         <tr>
                             <th class="typeB" style="vertical-align: middle;"><?php echo __('画像'); ?></th>
-                            <td><?php echo (!empty($bookmark['Bookmark']['image'])) ? '<img  class="img-thumbnail" src="' . Bookmark::imageURL($bookmark['Bookmark']['image']) . '"/>' : ''; ?></td>
+                            <td>
+                                <?php
+                                if(!empty($bookmark['Bookmark']['image'])) {
+                                    if (strpos($bookmark['Bookmark']['image'], 'icon') !== false) {
+                                        echo '<img style = "background-color: #46AFFA" class="img-thumbnail" src="' . $bookmark['Bookmark']['image'] . '"/>';
+                                    } else {
+                                        echo '<img  class="img-thumbnail" src="' . Bookmark::imageURL($bookmark['Bookmark']['image']) . '"/>';
+                                    }
+                                }else{
+                                    echo '<img  class="img-thumbnail" src="" />';
+                                }
+                                ?>
+                            </td>
                         </tr>
 
                     </tbody>

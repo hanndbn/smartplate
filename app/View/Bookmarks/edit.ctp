@@ -135,28 +135,31 @@ echo ($action == 'edit') ? __('コンテンツ修正') : __('コンテンツ新�
                             </div>
                         </div>
                         <div class="col-sm-6">
-                            <div class="form-group">
+                            <div class="form-group" style="margin-top: -70px;">
                                 <div class="control-label col-sm-3">
-                                    <span><?php echo __('画像')
-                                        ?>:</span>
                                 </div>
-                                <?php
-                                for ($i = 1; $i <= 13; $i++)
-                                    {
-                                ?>
-                                <div class="detail-image-content col-sm-8 imageChoose" style="display: none" id = <?php echo "imageChoose_$i" ?>>
-                                    <?php echo $this->Form->input("BookmarkExtData.image.$i", array('type' => 'file', 'id' => "BookmarkImageUpload_$i", 'div' => false, 'label' => false, 'class' => 'm-b-sm BookmarkImageUpload'));?>
-                                    <div class= <?php echo "image_contenner_$i" ?>>
-                                    <?php
-                                        if ($action == 'edit') {
-                                            echo (!empty($bookmarkExtData['image'][$i]) ? "<img  class='avatar_$i edit img-thumbnail' src='" . Bookmark::imageURL($bookmarkExtData['image'][$i]) . "'/><img class='image_delete' id = 'imagedelete_$i' src='/img/delete.png' height='20px'/>" : " <img src='' class='avatar_$i'/>");
-                                        } else {
-                                            echo " <img src='' class='avatar_$i'/>";
-                                        }
+                                <div class="detail-image-content col-sm-8">
+                                    <div style="width: 110px;text-align: center;"><span>Icon</span></div>
+                                    <div class="icon image_contenner">
+                                        <?php
+if ($action == 'edit') {
+    if(!empty($bookmark['Bookmark']['image'])){
+        if(strpos($bookmark['Bookmark']['image'], 'icon') !== false){
+            echo '<img style = "background-color: #46AFFA" class="avatar" src="' . $bookmark['Bookmark']['image'] . '"/><img id="image_delete" src="/img/delete.png" height="20px"/>';
+        }else{
+            echo '<img  class="avatar" src="' . Bookmark::imageURL($bookmark['Bookmark']['image']) . '"/><img id="image_delete" src="/img/delete.png" height="20px"/>';
+        }
+    } else {
+      echo '<img class="avatar"/><img id="image_delete" src="/img/delete.png" height="20px"/>';
+    }
+} else {
+echo ' <img src="" class="avatar"/><img id="image_delete" src="/img/delete.png" height="20px"/>';
+}
+                                        echo $this->Form->input('Bookmark.image', array('type' => 'file', 'id' => "BookmarkImageUpload", 'div' => false, 'label' => false, 'class' => 'm-b-sm'));
+                                        echo $this->Form->input('Bookmark.icon', array('div' => false, 'type' => 'hidden', 'id' => "BookmarkIcon"));
                                         ?>
                                     </div>
                                 </div>
-                                <?php } ?>
                             </div>
                         </div>
                     </div>
@@ -246,7 +249,10 @@ for ($i = 0; $i < 8; $i++) {
                                                 <div class="url col-sm-12">
                                                     <?php echo $this->Form->input("Link" . ($i) . "url", array('div' => false, 'label' => 'Url', 'name' => "data[Link][Btn][" . ($i) . "][url]", 'type' => 'text', 'value' => isset($linkType2[$i]['Link']['url']) ? $linkType2[$i]['Link']['url'] : '', 'maxlength' => '1024'));?>
                                                 </div></td>
-                                                <td class="icon text-center" data-number="<?php echo($i) ?>"><label for="BookmarkLink2icon" style="display: block">Icon</label><?php echo (isset($linkType2[$i]['Link']['icon'])) ? '<img class="img-thumbnail" src="/img/icon/thumb/' . $linkType2[$i]['Link']['icon'] . '.png" />' : '<img class="default img-thumbnail" />';
+                                                <td class="icon text-center" data-number="<?php echo($i) ?>">
+                                                    <label for="BookmarkLink2icon" style="display: block">Icon</label>
+                                                    <?php echo (isset($linkType2[$i]['Link']['icon'])) ? '<img class="img-thumbnail" src="/img/icon/thumb/' . $linkType2[$i]['Link']['icon'] . '.png" />' : '<img class="default img-thumbnail" />';
+                                                    echo $this->Form->input('Link.image'.($i), array('type' => 'file', 'id' => "LinkImageUpload_$i", 'name' => "data[Link][Btn][" . ($i) . "][image]", 'div' => false, 'label' => false, 'class' => 'm-b-sm'));
                                                 ?></td>
                                                 <?php echo $this->Form->input('Link.icon.' . ($i), array('div' => false, 'type' => 'hidden', 'name' => "data[Link][Btn][" . ($i) . "][icon]", 'value' => (isset($linkType2[$i]['Link']['icon']) ? $linkType2[$i]['Link']['icon'] . '.png' : '')));?>
                                             </tr>
@@ -451,11 +457,14 @@ $('.link-content img').attr('src', '').addClass('default');
 //            $('#LinkClear').val(1);
 });
 
-$('.image_delete').click(function (e) {
-    if(this.id.split("_")[1] != null) {
-        var kindId = this.id.split("_")[1];
-        $('.image_contenner_' + kindId).empty().html('<img class="avatar_' + kindId + '"/><input type="hidden" name="data[BookmarkExtData][image_deleted][' + kindId + ']" value=1 />');
-    }
+$('#image_delete').click(function (e) {
+    e.preventDefault();
+    $(".avatar").attr({"src" : "", style: ""})
+    $("#image_deleted").remove();
+    $(".image_contenner").append('<input type="hidden" id="image_deleted" name="data[Bookmark][image_deleted]" value=1 />');
+    $("#BookmarkImageUpload").val("");
+    $("#BookmarkIcon").val("");
+
 });
 $('#image_header_delete').click(function (e) {
     $('.image_header_contenner').empty().html('<img class="avatarHeader"/><input type="hidden" name="data[BookmarkExtData][image_header_deleted]" value=1 />');
@@ -494,7 +503,7 @@ $('#LabelClearLabel').val(1);
 $(this).hide();
 });
 
-$('.BookmarkImageUpload').on('change', function () {
+$('#BookmarkImageUpload').on('change', function () {
 imageURL(this);
 });
 
@@ -511,41 +520,40 @@ e.preventDefault();
 });
 
 function imageURL(input) {
-    if(input.id.split("_")[1] != null){
-        var kindId = input.id.split("_")[1];
-        var url = input.value,
-            ext = url.substring(url.lastIndexOf('.') + 1).toLowerCase(),
-            _validFileExtensions = ["jpg", "jpeg", "bmp", "gif", "png"];
+var url = input.value,
+ext = url.substring(url.lastIndexOf('.') + 1).toLowerCase(),
+_validFileExtensions = ["jpg", "jpeg", "bmp", "gif", "png"];
 
-        canUpload = true;
+canUpload = true;
 
-        if ($('#BookmarkImageUploadError'+ kindId).length) {
-            $('#BookmarkImageUploadError'+ kindId).empty().remove();
-        }
+if ($('#BookmarkImageUploadError').length) {
+$('#BookmarkImageUploadError').empty().remove();
+}
 
-        if ($.inArray(ext, _validFileExtensions) == -1) {
-            error = '<span id="BookmarkImageUploadError' + kindId + '" style="color: red;">* The selected file is not valid.</span>';
+if ($.inArray(ext, _validFileExtensions) == -1) {
+error = '<span id="BookmarkImageUploadError" style="color: red;">* The selected file is not valid.</span>';
 
-            $('.detail-image-content').append(error);
+$('.detail-image-content').append(error);
 
-            canUpload = false;
+canUpload = false;
 
-            return;
-        }
+return;
+}
 
-        if (input.files && input.files[0]) {
-            var reader = new FileReader();
+if (input.files && input.files[0]) {
+var reader = new FileReader();
 
-            reader.onload = function (e) {
-                $('.avatar_' + kindId)
-                    .attr('src', e.target.result)
-                    .width('120')
-                    .height('92');
-            };
+reader.onload = function (e) {
+    $('.avatar').attr({
+        src: e.target.result,
+        width: '110',
+        height : '110',
+        style: ''});
+    $("#BookmarkIcon").val('');
+};
 
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
+reader.readAsDataURL(input.files[0]);
+}
 }
 
 function imageHeaderURL(input) {
@@ -587,6 +595,9 @@ $('.icon').on("click", "img", function () {
 var $this = $(this),
 $remote = $('#modalIcon'),
 id = $this.data('id');
+if(this.id == 'image_delete'){
+    return;
+}
 if ($('#ajaxSubModal').length) {
 $modal = '';
 }
@@ -617,8 +628,12 @@ $('.modal-backdrop').not('fv-modal-stack')
 .addClass('fv-modal-stack');
 });
 }
-
-typeIconSelect = $(this).closest('td').data('number');
+if($(this).attr("class") == "avatar"){
+    typeIconSelect = $(this).attr("class");
+} else {
+    typeIconSelect = $(this).closest('td').data('number');
+}
+var className =  $(this).attr("className");
 $('body').append($modal);
 $('#ajaxSubModal').modal({
 show: true
@@ -641,10 +656,17 @@ imgTag;
 var baseUrl = '<?php echo $this->webroot ?>';
     if(iconSelected.length > 0) {
         iconName = iconSelected.closest('span').data('icon');
-        imgPath = $('.icon[data-number|=' + typeIconSelect + ']');
-        imgPath.find('img').remove();
-        imgTag = $('<img src="' + baseUrl + 'img/icon/thumb/' + iconName + '" class="img-thumbnail" alt="" />').appendTo(imgPath);
-        $('#LinkIcon' + typeIconSelect).val(iconName);
+        if(typeIconSelect == "avatar") {
+
+            $("#BookmarkIcon").val(baseUrl + 'img/icon/thumb/' + iconName);
+            $("#BookmarkImageUpload").val('');
+            $(".avatar").attr({'src' : baseUrl + 'img/icon/thumb/' + iconName}).css({'background-color': '#46AFFA', 'padding': '5px', 'width' : '110px', 'height' : '110px'});
+        } else {
+            imgPath = $('.icon[data-number|=' + typeIconSelect + ']');
+            imgPath.find('img').remove();
+            imgTag = $('<img src="' + baseUrl + 'img/icon/thumb/' + iconName + '" class="img-thumbnail" alt="" />').appendTo(imgPath);
+            $('#LinkIcon' + typeIconSelect).val(iconName);
+        }
     }
     typeIconSelect = null;
     $('#ajaxSubModal.in').modal('hide');
@@ -715,15 +737,6 @@ var baseUrl = '<?php echo $this->webroot ?>';
             }
         });
 
-
-        var kindChecked = $("#BookmarkKind :checked").val();
-        var imageDivSelector = "#imageChoose_" + kindChecked;
-        $(imageDivSelector).css("display", "");
-        $("#BookmarkKind").change(function(){
-            $(".imageChoose").css("display", "none");
-            var kindChecked = $("#BookmarkKind :checked").val();
-            var imageDivSelector = "#imageChoose_" + kindChecked;
-            $(imageDivSelector).css("display", "");
-        });
+        $("#avatarCss").remove() && $("<style type='text/css' id='avatarCss'> .avatar{ width:110px; height:110px;margin-bottom:5px; max-height: 110px !important; max-width: 110px !important;} </style>").appendTo("head");
 });
 </script>
