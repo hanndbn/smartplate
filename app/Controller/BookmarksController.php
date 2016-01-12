@@ -460,14 +460,21 @@ class BookmarksController extends AppController
             }
             if (isset($this->request->data['Bookmark'])) {
                 $rq_data = $this->request->data['Bookmark'];
-                // Upload image
-                if (is_uploaded_file($rq_data['image']['tmp_name'])) {
-                    $ImageModel = new Image();
-                    $ImageModel->target_folder = 'bookmark';
-                    $rq_data['image'] = $ImageModel->saveImage($this->Auth->user('team_id'), $rq_data['image']);
+
+                if(!empty($rq_data['icon'])){
+                    $rq_data['image'] = $rq_data['icon'];
                 } else {
-                    $rq_data['image'] = '';
+                    // Upload image
+                    if (is_uploaded_file($rq_data['image']['tmp_name'])) {
+                        $ImageModel = new Image();
+                        $ImageModel->target_folder = 'bookmark';
+                        $rq_data['image'] = $ImageModel->saveImage($this->Auth->user('team_id'), $rq_data['image']);
+                    } else {
+                        $rq_data['image'] = '';
+                    }
                 }
+                unset($rq_data["icon"]);
+                $rq_data = array_filter($rq_data);
                 $rq_data['team_id'] = $this->Auth->user('team_id');
                 $rq_data['cdate'] = date('Y-m-d H:i:s');
                 if ($this->Bookmark->save($rq_data)) {
@@ -553,8 +560,19 @@ class BookmarksController extends AppController
                                     if (isset($link['Btn'])) {
                                         foreach ($link['Btn'] as $key => $val) {
                                             if (empty($val['url'])) continue;
-                                            $icon = pathinfo($val['icon'], PATHINFO_FILENAME);
-                                            if (empty($icon)) $icon = 0;
+                                            $icon = 0;
+                                            $image = '';
+                                            if(!empty($val['icon'])){
+                                                $icon = pathinfo($val['icon'], PATHINFO_FILENAME);
+                                                if (empty($icon)) $icon = 0;
+                                            } elseif(!empty($val['image']['tmp_name'])) {
+                                                /* Upload image */
+                                                if (is_uploaded_file($val['image']['tmp_name'])) {
+                                                    $ImageModel = new Image();
+                                                    $ImageModel->target_folder = 'bookmark';
+                                                    $image = $ImageModel->saveImage($this->Auth->user('team_id'), $val['image']);
+                                                }
+                                            }
                                             $this->Link->save(
                                                 array(
                                                     'bookmark_id' => $new_bm_id,
@@ -565,7 +583,8 @@ class BookmarksController extends AppController
                                                     'link_text' => $val['title'],
                                                     'icon' => $icon,
                                                     'user_id' => $this->Auth->user('id'),
-                                                    'cdate' => "$udate"
+                                                    'cdate' => "$udate",
+                                                    'image' => $image
                                                 ));
                                         }
                                     }
@@ -706,7 +725,7 @@ class BookmarksController extends AppController
                 'bookmark_id' => $id,
                 'type' => 2
             ),
-            'fields' => array('url', 'type', 'sub_type', 'link_text', 'icon')
+            'fields' => array('url', 'type', 'sub_type', 'link_text', 'icon', 'image')
         ));
         $linkType3 = $this->Link->find('all', array(
             'conditions' => array(
@@ -824,8 +843,19 @@ class BookmarksController extends AppController
                             if (isset($link['Btn'])) {
                                 foreach ($link['Btn'] as $key => $val) {
                                     if (empty($val['url'])) continue;
-                                    $icon = pathinfo($val['icon'], PATHINFO_FILENAME);
-                                    if (empty($icon)) $icon = 0;
+                                    $icon = 0;
+                                    $image = '';
+                                    if(!empty($val['icon'])){
+                                        $icon = pathinfo($val['icon'], PATHINFO_FILENAME);
+                                        if (empty($icon)) $icon = 0;
+                                    } elseif(!empty($val['image']['tmp_name'])) {
+                                        /* Upload image */
+                                        if (is_uploaded_file($val['image']['tmp_name'])) {
+                                            $ImageModel = new Image();
+                                            $ImageModel->target_folder = 'bookmark';
+                                            $image = $ImageModel->saveImage($this->Auth->user('team_id'), $val['image']);
+                                        }
+                                    }
                                     $this->Link->save(
                                         array(
                                             'bookmark_id' => $id,
@@ -836,7 +866,8 @@ class BookmarksController extends AppController
                                             'link_text' => $val['title'],
                                             'icon' => $icon,
                                             'user_id' => $this->Auth->user('id'),
-                                            'cdate' => "$udate"
+                                            'cdate' => "$udate",
+                                            'image' => $image
                                         ));
                                 }
                             }

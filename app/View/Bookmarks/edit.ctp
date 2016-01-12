@@ -35,11 +35,11 @@ echo ($action == 'edit') ? __('コンテンツ修正') : __('コンテンツ新�
                                     </div>
                                 </div>
                                 <div class="control-label col-sm-2">
-                                    <span><?php echo __('種別');?>:</span>
+<!--                                    <span>--><?php //echo __('種別');?><!--:</span>-->
                                 </div>
                                 <div class="text-right col-sm-5">
                                     <?php
-                                    echo $this->Form->input("Bookmark.kind", array('label' => false, 'options' => $sp_type, 'div' => false, 'default' => $cr_type));
+//                                    echo $this->Form->input("Bookmark.kind", array('label' => false, 'options' => $sp_type, 'div' => false, 'default' => $cr_type));
                                     ?>
                                 </div>
                                 <?php } else {?>
@@ -251,10 +251,18 @@ for ($i = 0; $i < 8; $i++) {
                                                 </div></td>
                                                 <td class="icon text-center" data-number="<?php echo($i) ?>">
                                                     <label for="BookmarkLink2icon" style="display: block">Icon</label>
-                                                    <?php echo (isset($linkType2[$i]['Link']['icon'])) ? '<img class="img-thumbnail" src="/img/icon/thumb/' . $linkType2[$i]['Link']['icon'] . '.png" />' : '<img class="default img-thumbnail" />';
-                                                    echo $this->Form->input('Link.image'.($i), array('type' => 'file', 'id' => "LinkImageUpload_$i", 'name' => "data[Link][Btn][" . ($i) . "][image]", 'div' => false, 'label' => false, 'class' => 'm-b-sm'));
+                                                    <?php
+                                                    if(isset($linkType2[$i]['Link']['icon']) && $linkType2[$i]['Link']['icon'] != "0"){
+                                                        echo '<img id = "img-thumbnail_'. $i .'" class="img-thumbnail" src="/img/icon/thumb/' . $linkType2[$i]['Link']['icon'] . '.png" />';
+                                                    } elseif(isset($linkType2[$i]['Link']['image']) && !empty($linkType2[$i]['Link']['image'])){
+                                                        echo '<img style = "border: none;background-color: transparent;"id = "img-thumbnail_'. $i .'" class="img-thumbnail" src="'. Bookmark::imageURL($linkType2[$i]['Link']['image']) . '" />';
+                                                    } else{
+                                                        echo '<img class="default img-thumbnail" id = "img-thumbnail_'. $i .'" />';
+                                                    }
+                                                    echo $this->Form->input('Link.image'.($i), array('type' => 'file', 'style' => 'width:90px;', 'class' => 'LinkImageUpload', 'id' => "LinkImageUpload_$i", 'name' => "data[Link][Btn][" . ($i) . "][image]", 'div' => false, 'label' => false));
                                                 ?></td>
-                                                <?php echo $this->Form->input('Link.icon.' . ($i), array('div' => false, 'type' => 'hidden', 'name' => "data[Link][Btn][" . ($i) . "][icon]", 'value' => (isset($linkType2[$i]['Link']['icon']) ? $linkType2[$i]['Link']['icon'] . '.png' : '')));?>
+                                                <?php echo $this->Form->input('Link.icon.' . ($i), array('div' => false, 'type' => 'hidden', 'name' => "data[Link][Btn][" . ($i) . "][icon]", 'value' => ((isset($linkType2[$i]['Link']['icon']) && $linkType2[$i]['Link']['icon'] != '0') ? $linkType2[$i]['Link']['icon'] . '.png' : ''), 'id' => "LinkIcon_$i"));?>
+
                                             </tr>
                                         </tbody>
                                     </table>
@@ -507,6 +515,10 @@ $('#BookmarkImageUpload').on('change', function () {
 imageURL(this);
 });
 
+$('.LinkImageUpload').on('change', function () {
+    imageIconURL(this);
+});
+
 $('#BookmarkHeaderImageUpload').on('change', function () {
     imageHeaderURL(this);
 });
@@ -554,6 +566,43 @@ reader.onload = function (e) {
 
 reader.readAsDataURL(input.files[0]);
 }
+}
+function imageIconURL(input) {
+    var id = input.id.split("_")[1];
+    var url = input.value,
+        ext = url.substring(url.lastIndexOf('.') + 1).toLowerCase(),
+        _validFileExtensions = ["jpg", "jpeg", "bmp", "gif", "png"];
+
+    canUpload = true;
+
+    if ($('#LinkImageUploadError_'+ id).length) {
+        $('#LinkImageUploadError_'+ id).empty().remove();
+    }
+
+    if ($.inArray(ext, _validFileExtensions) == -1) {
+        error = '<span id="LinkImageUploadError_" style="color: red;">* The selected file is not valid.</span>';
+
+        $('#LinkImageUploadError_'+ id).append(error);
+
+        canUpload = false;
+
+        return;
+    }
+
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            $('#img-thumbnail_'+ id).attr({
+                src: e.target.result,
+                width: '80px',
+                height : '80px',
+                style : 'border: none; padding: 0px;background-color: transparent;'});
+            $("#LinkIcon_" + id).val('');
+        };
+
+        reader.readAsDataURL(input.files[0]);
+    }
 }
 
 function imageHeaderURL(input) {
@@ -660,12 +709,12 @@ var baseUrl = '<?php echo $this->webroot ?>';
 
             $("#BookmarkIcon").val(baseUrl + 'img/icon/thumb/' + iconName);
             $("#BookmarkImageUpload").val('');
-            $(".avatar").attr({'src' : baseUrl + 'img/icon/thumb/' + iconName}).css({'background-color': '#46AFFA', 'padding': '5px', 'width' : '110px', 'height' : '110px'});
+            $(".avatar").attr({'src' : baseUrl + 'img/icon/thumb/' + iconName}).css({'background-color': '#46AFFA', 'padding': '5px', 'width' : '110px', 'height' : '110px', 'border-radius' : '4px'});
         } else {
             imgPath = $('.icon[data-number|=' + typeIconSelect + ']');
-            imgPath.find('img').remove();
-            imgTag = $('<img src="' + baseUrl + 'img/icon/thumb/' + iconName + '" class="img-thumbnail" alt="" />').appendTo(imgPath);
-            $('#LinkIcon' + typeIconSelect).val(iconName);
+            imgPath.find('img').attr({"src": baseUrl + 'img/icon/thumb/' + iconName, class:'img-thumbnail', style : 'background-color: #46AFFA'});
+            $("#LinkImageUpload_"+ typeIconSelect).val("");
+            $('#LinkIcon_' + typeIconSelect).val(iconName);
         }
     }
     typeIconSelect = null;
@@ -737,6 +786,6 @@ var baseUrl = '<?php echo $this->webroot ?>';
             }
         });
 
-        $("#avatarCss").remove() && $("<style type='text/css' id='avatarCss'> .avatar{ width:110px; height:110px;margin-bottom:5px; max-height: 110px !important; max-width: 110px !important;} </style>").appendTo("head");
+        $("#avatarCss").remove() && $("<style type='text/css' id='avatarCss'> .avatar{ width:110px; height:110px;margin-bottom:5px; max-height: 110px !important; max-width: 110px !important; border-radius: 4px;} </style>").appendTo("head");
 });
 </script>
