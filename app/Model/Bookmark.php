@@ -18,7 +18,8 @@ class Bookmark extends AppModel {
     const TYPE_TAILS = 2;
     const TYPE_RANDOM = 3;
     const TYPE_ROTATE = 4;
-    const TYPE_MEDIA = 5;
+    const TYPE_TIME_RANGE = 5;
+    const TYPE_MEDIA = 11;
     const TYPE_APPS = 6;
     const TYPE_PROGRAMMABLE = 7;
     const TYPE_LUCKY_DRAW = 8;

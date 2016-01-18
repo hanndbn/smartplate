@@ -128,7 +128,7 @@ echo ($action == 'edit') ? __('コンテンツ修正') : __('コンテンツ新�
                                 </div>
                                 <div class="control-label col-sm-4">
                                     <?php
-                                    $options = array(__('通常'), __('OS'), __('タイルズ'), __('ランダム'), __('ローテーション'));
+                                    $options = array(__('通常'), __('OS'), __('タイルズ'), __('ランダム'), __('ローテーション'), __('TIME Range'));
                                     echo $this->Form->input("Bookmark.linkType", array('label' => false, 'options' => $options, 'div' => false, 'default' => (isset($linkType)) ? $linkType : ''));
                                     ?>
                                 </div>
@@ -288,6 +288,24 @@ for ($i = 1; $i <= 8; $i++) {
                                 </div>
                                 <div class="redirectType4">
                                     <?php
+                                    for ($i = 1; $i <= 8; $i++) {
+                                        ?>
+                                        <table id="editBookmarkTable" class="table">
+                                            <tbody>
+                                            <tr>
+                                                <td class="text-center id-column"><?php echo($i)
+                                                    ?></td>
+                                                <td>
+                                                    <div class="url col-sm-12">
+                                                        <?php echo $this->Form->input("Link" . $i . "url", array('div' => false, 'label' => 'Url', 'name' => "data[Link][rotate][" . $i . "][url]", 'type' => 'text', 'value' => isset($linkType4[$i - 1]['Link']['url']) ? $linkType4[$i - 1]['Link']['url'] : '', 'maxlength' => '1024'));?>
+                                                    </div></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    <?php }?>
+                                </div>
+                                <div class="redirectType5">
+                                    <?php
 for ($i = 1; $i <= 8; $i++) {
                                     ?>
                                     <table id="editBookmarkTable" class="table">
@@ -301,7 +319,7 @@ for ($i = 1; $i <= 8; $i++) {
                                                             <span><?php echo __('Start') ?>:</span>
                                                         </div>
                                                         <div class="detail-code-content col-sm-9">
-                                                            <?php echo $this->Form->input("Link" . $i . "start_date", array('div' => false, 'label' => false, 'name' => "data[Link][rotate][" . $i . "][start_date]", 'type' => 'text', 'value' => isset($linkType4[$i - 1]['Link']['start_date']) ? $linkType4[$i - 1]['Link']['start_date'] : '', 'class' => 'start_date'));?>
+                                                            <?php echo $this->Form->input("Link" . $i . "start_date", array('div' => false, 'label' => false, 'name' => "data[Link][time][" . $i . "][start_date]", 'type' => 'text', 'value' => isset($linkType5[$i - 1]['Link']['start_date']) ? $linkType5[$i - 1]['Link']['start_date'] : '', 'class' => 'start_date'));?>
                                                         </div>
                                                     </div>
                                                     <div class="form-group">
@@ -309,13 +327,13 @@ for ($i = 1; $i <= 8; $i++) {
                                                             <span><?php echo __('End') ?>:</span>
                                                         </div>
                                                         <div class="detail-code-content col-sm-9">
-                                                            <?php echo $this->Form->input("Link" . $i . "end_date", array('div' => false, 'label' => false, 'name' => "data[Link][rotate][" . $i . "][end_date]", 'type' => 'text', 'value' => isset($linkType4[$i - 1]['Link']['end_date']) ? $linkType4[$i - 1]['Link']['end_date'] : '', 'class' => 'end_date'));?>
+                                                            <?php echo $this->Form->input("Link" . $i . "end_date", array('div' => false, 'label' => false, 'name' => "data[Link][time][" . $i . "][end_date]", 'type' => 'text', 'value' => isset($linkType5[$i - 1]['Link']['end_date']) ? $linkType5[$i - 1]['Link']['end_date'] : '', 'class' => 'end_date'));?>
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td style="vertical-align: baseline;">
                                                 <div class="url col-sm-12">
-                                                    <?php echo $this->Form->input("Link" . $i . "url", array('div' => false, 'label' => 'Url', 'name' => "data[Link][rotate][" . $i . "][url]", 'type' => 'text', 'value' => isset($linkType4[$i - 1]['Link']['url']) ? $linkType4[$i - 1]['Link']['url'] : '', 'maxlength' => '1024'));?>
+                                                    <?php echo $this->Form->input("Link" . $i . "url", array('div' => false, 'label' => 'Url', 'name' => "data[Link][time][" . $i . "][url]", 'type' => 'text', 'value' => isset($linkType5[$i - 1]['Link']['url']) ? $linkType5[$i - 1]['Link']['url'] : '', 'maxlength' => '1024'));?>
                                                 </div></td>
                                             </tr>
                                         </tbody>
@@ -433,10 +451,11 @@ case "1": $('#LinkType').val('os');     break;
 case "2": $('#LinkType').val('button'); break;
 case "3": $('#LinkType').val('random'); break;
 case "4": $('#LinkType').val('rotate'); break;
+case "5": $('#LinkType').val('time'); break;
 default:
 break;
 }
-for( i=0; i<5; i++){
+for( i=0; i<=5; i++){
 if( $('.redirectType'+i) )
 $('.redirectType'+i).hide();
 }
@@ -449,10 +468,11 @@ case "1": $('#LinkType').val('os');     break;
 case "2": $('#LinkType').val('button'); break;
 case "3": $('#LinkType').val('random'); break;
 case "4": $('#LinkType').val('rotate'); break;
+case "5": $('#LinkType').val('time'); break;
 default:
 break;
 }
-for( i=0; i<5; i++){
+for( i=0; i<=5; i++){
 if( $('.redirectType'+i) )
 $('.redirectType'+i).hide();
 }

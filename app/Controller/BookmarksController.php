@@ -598,6 +598,24 @@ class BookmarksController extends AppController
                                     }
                                     if (isset($link[$redirectType])) {
                                         foreach ($link[$redirectType] as $key => $val) {
+                                            if (empty($val['url'])) continue;
+                                            $this->Link->save(
+                                                array(
+                                                    'bookmark_id' => $new_bm_id,
+                                                    'tag_id' => 0,
+                                                    'type' => $type,
+                                                    'sub_type' => $key,
+                                                    'url' => $val['url'],
+                                                    'user_id' => $this->Auth->user('id'),
+                                                    'cdate' => "$udate"
+                                                ));
+                                        }
+                                    }
+                                    break;
+                                case 'time':
+                                    $type = Bookmark::TYPE_TIME_RANGE;
+                                    if (isset($link[$redirectType])) {
+                                        foreach ($link[$redirectType] as $key => $val) {
                                             if (!empty($val['url']) || (!empty($val['start_date']) && !empty($val['end_date']))) {
                                                 $this->Link->save(
                                                     array(
@@ -739,6 +757,13 @@ class BookmarksController extends AppController
                 'bookmark_id' => $id,
                 'type' => Bookmark::TYPE_ROTATE
             ),
+            'fields' => array('url', 'type', 'sub_type')
+        ));
+        $linkType5 = $this->Link->find('all', array(
+            'conditions' => array(
+                'bookmark_id' => $id,
+                'type' => Bookmark::TYPE_TIME_RANGE
+            ),
             'fields' => array('url', 'type', 'sub_type', 'start_date', 'end_date')
         ));
         //List Label
@@ -783,6 +808,7 @@ class BookmarksController extends AppController
             'linkType2' => $linkType2,
             'linkType3' => $linkType3,
             'linkType4' => $linkType4,
+            'linkType5' => $linkType5,
             'cr_label' => $label,
             'cr_type' => $cr_type,
             'sp_type' => $sp_type,
@@ -879,6 +905,24 @@ class BookmarksController extends AppController
                             } else {
                                 $type = Bookmark::TYPE_ROTATE;
                             }
+                            if (isset($link[$redirectType])) {
+                                foreach ($link[$redirectType] as $key => $val) {
+                                    if (empty($val['url'])) continue;
+                                    $this->Link->save(
+                                        array(
+                                            'bookmark_id' => $id,
+                                            'tag_id' => 0,
+                                            'type' => $type,
+                                            'sub_type' => $key,
+                                            'url' => $val['url'],
+                                            'user_id' => $this->Auth->user('id'),
+                                            'cdate' => "$udate"
+                                        ));
+                                }
+                            }
+                            break;
+                        case 'time':
+                            $type = Bookmark::TYPE_TIME_RANGE;
                             if (isset($link[$redirectType])) {
                                 foreach ($link[$redirectType] as $key => $val) {
                                     if (!empty($val['url']) || (!empty($val['start_date']) && !empty($val['end_date']))) {
