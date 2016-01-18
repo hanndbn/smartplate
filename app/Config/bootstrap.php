@@ -111,7 +111,7 @@ CakeLog::config('error', array(
  */
 CakePlugin::load('Timthumb', array('routes' => true, 'bootstrap' => true));
 CakePlugin::load('CsvView');
-
+App::import('Vendor/uaparser/vendor', array('file' => 'autoload'));
 App::build(array(
     'Controller' => array(APP . 'Controller' . DS . 'Manager' . DS,APP . 'Controller' . DS . 'Api' . DS),
 ));

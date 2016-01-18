@@ -1,6 +1,6 @@
 <?php
 App::uses('APIController', 'Controller');
-
+use UAParser\Parser;
 
 class DeviceCountController extends APIController
 {
@@ -95,15 +95,27 @@ class DeviceCountController extends APIController
                     $sql = $sql . " OFFSET $offset";
                 }
             }
-            echo($sql."</br>");
 
             $total_device = $this->AccessLog->query($sql);
             $data = array();
             $total_count = 0;
+            $parser = Parser::create();
+            $arrayDevice = array();
             foreach($total_device as $key => $value){
-                array_push($data, array('count' => $value['0']['total'], 'name' => $value['access_log']['ua']));
-                $total_count += $value['0']['total'];
+                $result = $parser->parse($value['access_log']['ua']);
+                $device_name = $result->device->family;
+                if(isset($arrayDevice[$device_name]) && $arrayDevice[$device_name] > 0 ){
+                    $arrayDevice[$device_name] += $value['0']['total'];
+                }else{
+                    $arrayDevice[$device_name] = $value['0']['total'];
+                }
             }
+
+            foreach($arrayDevice as $key => $value){
+                array_push($data, array('count' => $value, 'name' => $key));
+                $total_count += $value;
+            }
+
             $analytics = array(
                 'data' => $data,
                 'total_count' => $total_count,
