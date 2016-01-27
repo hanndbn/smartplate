@@ -187,7 +187,7 @@ class BookmarksController extends AppController
                         $conditions += array(
                             array('Bookmark.name LIKE' => '%' . str_replace('%', '\%', $value) . '%')
                         );
-                    }  elseif($param_name = "filter"){
+                    }  elseif($param_name == "filter"){
                         if($value == 'filter'){
                             $flgFilter = true;
                         }

@@ -170,7 +170,7 @@ class TagsController extends AppController
                             )
                             )
                         );
-                    } else if($param_name = "filter"){
+                    } else if($param_name == "filter"){
                         if($value == 'filter'){
                             $flgFilter = true;
                         }
