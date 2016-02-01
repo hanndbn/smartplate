@@ -28,7 +28,7 @@ class ChangeImagesController extends AppController
                 $data = $this->Session->read($strTable);
                 if (isset($data)) {
                     foreach ($this->Session->read($strTable) as $key => $value) {
-                        array_push($ids, $value['ChangeImages']['id']);
+                        array_push($ids, $value[$strTable]['id']);
                     }
                 }
             } else {

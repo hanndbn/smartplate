@@ -894,9 +894,9 @@ class TagsController extends AppController
             $selectall = $rq_data['selectall'];
             $ids = array();
             if(isset($selectall) && $selectall == '1') {
-                $tagData = $this->Session->read("tag");
+                $tagData = $this->Session->read("Tag");
                 if (isset($tagData)) {
-                    foreach ($this->Session->read("tag") as $key => $value) {
+                    foreach ($this->Session->read("Tag") as $key => $value) {
                         array_push($ids, $value['Tag']['id']);
                     }
                 }
@@ -991,9 +991,9 @@ class TagsController extends AppController
             $target_ids = array();
             $selectall = $this->request->data['Tag']['selectall'];
             if($selectall == '1') {
-                $tagData = $this->Session->read("tag");
+                $tagData = $this->Session->read("Tag");
                 if (isset($tagData)) {
-                    foreach ($this->Session->read("tag") as $key => $value) {
+                    foreach ($this->Session->read("Tag") as $key => $value) {
                         array_push($target_ids, $value['Tag']['id']);
                     }
                 }
@@ -1096,9 +1096,9 @@ class TagsController extends AppController
             $ids = array();
             $selectall = $this->request->data['Tag']['selectall'];
             if($selectall == '1') {
-                $tagData = $this->Session->read("tag");
+                $tagData = $this->Session->read("Tag");
                 if (isset($tagData)) {
-                    foreach ($this->Session->read("tag") as $key => $value) {
+                    foreach ($this->Session->read("Tag") as $key => $value) {
                         array_push($ids, $value['Tag']['id']);
                     }
                 }

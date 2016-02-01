@@ -44,6 +44,11 @@ class DeviceCountController extends APIController
                 $type = '0';
             }
 
+            // offset
+            if(!isset($offset)){
+                $offset = 0;
+            }
+
             // get obj with id
             //custom variable
             $tag_obj = null;
@@ -69,57 +74,73 @@ class DeviceCountController extends APIController
 
             $directionArray = array("asc", "desc");
             if (!isset($direction) || empty($direction) || !in_array(strtolower($direction), $directionArray)) {
-                $direction = 'ASC';
+                $direction = '';
+            }else {
+                strtolower($direction);
             }
-
-            $sql = "SELECT ua, count(*) AS total FROM access_log WHERE 1 ";
-
+            $condition = array();
 
             if(isset($bookmark_id)){
-                $sql = $sql . " AND bookmark_id = '$bookmark_id'";
+                $condition += array('bookmark_id' => $bookmark_id);
             }
 
             if (isset($start) && !empty($start)) {
-                $sql = $sql . " AND created_at >= '$start_timezone'";
+                $condition += array('created_at >=' => $start_timezone);
             }
             if (isset($end) && !empty($end)) {
-                $sql = $sql . " AND created_at <= '$end_timezone'";
+                $condition += array('created_at <=' => $end_timezone);
             }
 
-            $sql= $sql." GROUP BY ua ";
-            $sql= $sql." ORDER BY ua $direction";
 
-            if (isset($limit) && !empty($limit)) {
-                $sql = $sql . " LIMIT $limit";
-                if (isset($offset) && !empty($offset)) {
-                    $sql = $sql . " OFFSET $offset";
-                }
-            }
+            $total_device = $this->AccessLog->find( 'all', array(
+                'conditions'  => $condition,
+                'fields'      => array( 'ua')
+            ));
 
-            $total_device = $this->AccessLog->query($sql);
+            $devices = $this->AccessLog->find( 'all', array(
+                'conditions'  => $condition,
+                'fields'      => array( 'ua', 'count(*) as total' ),
+                'group'       => array( 'ua' ),
+            ));
+
             $data = array();
             $total_count = 0;
             $parser = Parser::create();
             $arrayDevice = array();
-            foreach($total_device as $key => $value){
-                $result = $parser->parse($value['access_log']['ua']);
+            foreach($devices as $key => $value){
+                $result = $parser->parse($value['AccessLog']['ua']);
                 $device_name = $result->device->family;
                 if(isset($arrayDevice[$device_name]) && $arrayDevice[$device_name] > 0 ){
-                    $arrayDevice[$device_name] += $value['0']['total'];
+                    $arrayDevice[$device_name] += intval($value['0']['total']);
                 }else{
-                    $arrayDevice[$device_name] = $value['0']['total'];
+                    $arrayDevice[$device_name] = intval($value['0']['total']);
                 }
             }
 
-            foreach($arrayDevice as $key => $value){
+            if($direction == 'asc'){
+                asort($arrayDevice);
+            } else if($direction == 'desc'){
+                arsort($arrayDevice);
+            }
+
+            if(isset($limit)) {
+                if($limit > count($arrayDevice)){
+                    $limit = count($arrayDevice);
+                }
+                $arrayDeviceSlice = array_slice($arrayDevice, $offset, $limit);
+            } else{
+                $arrayDeviceSlice = array_slice($arrayDevice, $offset);
+            }
+
+            foreach($arrayDeviceSlice as $key => $value){
                 array_push($data, array('count' => $value, 'name' => $key));
                 $total_count += $value;
             }
 
             $analytics = array(
                 'data' => $data,
-                'total_count' => $total_count,
-                'total_number' => count($total_device)
+                'total_count' => count($total_device),
+                'total_number' => count($arrayDevice)
             );
             $this->result['analytics'] = $analytics;
         }

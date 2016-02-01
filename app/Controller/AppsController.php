@@ -541,7 +541,7 @@ class AppsController extends AppController {
                 $target_ids = array();
                 $selectall = $this->request->data['User']['selectall'];
                 if($selectall == '1') {
-                    $accountData = $this->Session->read("tag");
+                    $accountData = $this->Session->read("Tag");
                     if (isset($accountData)) {
                         foreach ($this->Session->read("account") as $key => $value) {
                             array_push($target_ids, $value['User']['id']);
