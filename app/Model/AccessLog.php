@@ -1270,6 +1270,48 @@ class AccessLog extends AppModel {
 
 		return $res;
 	}
+
+    /**
+     * add condition with type plate or type content
+     *
+     * @param type, bookmark_id, content, app
+     *        	in array
+     * @return condition
+     */
+    public function getConditionWithType($team_ids, $type, $bookmark_id, $_tag, $start_date = null, $end_date = null, $app = null) {
+        $team_ids = intval ( $team_ids );
+        $condition = array (
+            'team_id' => $team_ids
+        );
+        if ($type == self::TYPE_PLATE) {
+            if (! empty ( $_tag )) {
+                $condition = $this->addTagString ( $_tag, $condition );
+            } else {
+                if( $this->app_user_id > 0 ){
+                    $condition[ "CONCAT(p_head,'.',p_lot,'.',p_num)" ] = self::$filter_user_plate_list;
+                }else{
+                    $condition = $this->addkActivatePalteList ( $condition );
+                }
+            }
+            if ($app == self::TYPR_APP_CLOUD) {
+                $condition ['bookmark_id !='] = 0;
+            }
+        } else if ($type == self::TYPE_CONTENTS) {
+            if ($app == self::TYPR_APP_CLOUD && ! empty ( $bookmark_id )) {
+                $condition ['bookmark_id'] = $bookmark_id;
+            }
+        }
+
+        if ($start_date) {
+            $options ['created_at >='] = $start_date;
+        }
+        if ($end_date) {
+            $options ['created_at <='] = $end_date;
+        }
+
+        return $condition;
+    }
+
 }
 
 ?>

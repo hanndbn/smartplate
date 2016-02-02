@@ -266,7 +266,6 @@ function ajaxEdit(url, data) {
         success: function (rs) {
             location.reload();
             $('#selection').val('');
-            $("#quickAction-btn").prop("disabled","none");
         }
     });
 }
@@ -509,7 +508,6 @@ $(document).ready(function () {
             case '5':
                 break;
             case '6':
-                $("#quickAction-btn").prop("disabled","disbled");
                 ids = getIDs(checked);
                 data = {ids: ids, type: filter_val, selectall:selectall};
                 ajaxEdit(url, data);
