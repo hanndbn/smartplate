@@ -1301,14 +1301,12 @@ class AccessLog extends AppModel {
                 $condition ['bookmark_id'] = $bookmark_id;
             }
         }
-
         if ($start_date) {
-            $options ['created_at >='] = $start_date;
+            $condition ['created_at >='] = $start_date;
         }
         if ($end_date) {
-            $options ['created_at <='] = $end_date;
+            $condition ['created_at <='] = $end_date;
         }
-
         return $condition;
     }
 
